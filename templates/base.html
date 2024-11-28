@@ -4,18 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tu Tienda{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .module-card {
-            margin-bottom: 20px;
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(45deg, #1d3557, #457b9d);
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        nav a {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        nav a:hover {
+            color: #f4a261;
+            text-decoration: none;
+        }
+
+        /* Buttons */
+        .btn-primary, .btn-secondary {
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #f4a261;
+            border-color: #f4a261;
+        }
+
+        .btn-secondary:hover {
+            background-color: #457b9d;
+            border-color: #457b9d;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(45deg, #457b9d, #1d3557);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        footer ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+
+        footer ul li {
+            margin: 0 15px;
+        }
+
+        footer ul li a {
+            color: white;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        footer ul li a:hover {
+            color: #f4a261;
+        }
+
+        footer p {
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-dark text-white text-center py-3">
+    <header class="text-center py-4">
         <h1>Tu Tienda</h1>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="{{ url_for('index') }}">Inicio</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,14 +128,14 @@
     </main>
 
     <!-- Footer -->
-    <footer style="background-color: #333; color: white; text-align: center; padding: 20px; margin-top: 20px;">
+    <footer>
         <p>¡Síguenos en nuestras redes sociales!</p>
-        <ul style="list-style: none; display: flex; justify-content: center; padding: 0;">
-            <li style="margin: 0 10px;">
-                <a href="https://www.facebook.com/tu_tienda" target="_blank" style="color: white; text-decoration: none;">🌐 Facebook</a>
+        <ul>
+            <li>
+                <a href="https://www.facebook.com/tu_tienda" target="_blank"><i class="fab fa-facebook"></i></a>
             </li>
-            <li style="margin: 0 10px;">
-                <a href="https://www.instagram.com/tu_tienda" target="_blank" style="color: white; text-decoration: none;">📷 Instagram</a>
+            <li>
+                <a href="https://www.instagram.com/tu_tienda" target="_blank"><i class="fab fa-instagram"></i></a>
             </li>
         </ul>
         <p>&copy; 2024 Tu Tienda. Todos los derechos reservados.</p>

@@ -9,9 +9,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto1',
-        password='Proyecto1',
-        dsn='localhost:1521/XE',
+        user='Proyecto',
+        password='Proyecto',
+        dsn='localhost:1521/orcl',
         encoding='UTF-8'
     )
     return connection
