@@ -9,9 +9,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto1',
-        password='Proyecto1',
-        dsn='localhost:1521/xe',
+        user='Proyecto',
+        password='Proyecto',
+        dsn='localhost:1521/orcl',
         encoding='UTF-8'
     )
     return connection
@@ -210,12 +210,12 @@ def inventario():
             casillero_id = request.form['casillero_id']
             imagen = request.files['imagen']
             imagen_blob = imagen.read()
-
+ 
             print("Datos recibidos para insertar:")
             print(f"Nombre: {nombre}, Precio: {precio}, Detalle: {detalle}, Cantidad: {cantidad}, Categoría: {categoria}, Proveedor ID: {proveedor_id}, Casillero ID: {casillero_id}, Imagen: {len(imagen_blob)} bytes")
-
+ 
             cursor.execute("""
-                INSERT INTO FIDE_INVENTARIO_TB 
+                INSERT INTO FIDE_INVENTARIO_TB
                 (Nombre, Imagen, Precio, Detalle, Cantidad, Categoria, Proveedor_ID, Casillero_ID, Fecha_Entrada)
                 VALUES (:nombre, :imagen_blob, :precio, :detalle, :cantidad, :categoria, :proveedor_id, :casillero_id, SYSTIMESTAMP)
             """, {
@@ -329,7 +329,28 @@ def proveedores():
     conn.close()
     return render_template('proveedores.html', proveedores=proveedores)
    
+@app.route('/envios')
+def envios():
+    """
+    Página de gestión de envíos.
+    """
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Aquí puedes agregar lógica para obtener envíos desde la base de datos si es necesario
+    return render_template('envios.html')  # Asegúrate de tener el archivo envios.html
 
+@app.route('/facturas')
+def facturas():
+    """
+    Página de facturas para el cliente.
+    """
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Aquí puedes agregar lógica para obtener facturas desde la base de datos si es necesario
+    return render_template('facturas.html')  # Asegúrate de tener el archivo facturas.html
 
 if __name__ == '__main__':
     app.run(debug=True)
+
