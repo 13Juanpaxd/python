@@ -9,30 +9,59 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto',
-        password='Proyecto',
-        dsn='localhost:1521/orcl',
+        user='Proyecto1',
+        password='Proyecto1',
+        dsn='localhost:1521/xe',
         encoding='UTF-8'
     )
     return connection
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    """
+    Esta función maneja la lógica de inicio de sesión.
+
+    Permite a los usuarios iniciar sesión como administradores o usuarios regulares.
+    Verifica las credenciales ingresadas y redirige al usuario a la página correspondiente.
+    """
+
     if request.method == 'POST':
+        # Obtener los datos del formulario
         correo = request.form['correo']
         cedula = request.form['cedula']
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('SELECT ID_Cliente FROM FIDE_CLIENTES_TB WHERE Correo = :correo AND Cedula = :cedula', {'correo': correo, 'cedula': cedula})
-        user = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        if user:
-            session['user_id'] = user[0]
-            return redirect(url_for('index'))
+
+        # Verificar si es un administrador
+        if correo == 'ADMIN@ADMIN.AD' and cedula == '987654321':
+            # Inicio de sesión exitoso para administrador
+            session['user_id'] = 1  # Reemplaza 1 con el ID real del administrador en tu base de datos
+            session['is_admin'] = True
+            return redirect(url_for('index'))  # Redirigir al panel de administrador
+
+        # Verificar si es un usuario regular
         else:
-            flash('Correo o cédula incorrectos. Inténtelo de nuevo.')
+            # Conectar a la base de datos y buscar al usuario
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute('SELECT ID_Cliente FROM FIDE_CLIENTES_TB WHERE Correo = :correo AND Cedula = :cedula', {'correo': correo, 'cedula': cedula})
+            user = cursor.fetchone()
+            cursor.close()
+            conn.close()
+
+            # Si se encontró al usuario, iniciar sesión
+            if user:
+                session['user_id'] = user[0]
+                session['is_admin'] = False
+                return redirect(url_for('home'))  # Redirigir a la página principal del usuario
+
+            # Si no se encontró al usuario, mostrar un mensaje de error
+            else:
+                flash('Correo o cédula incorrectos. Inténtelo de nuevo.')
+
+    # Mostrar el formulario de inicio de sesión
     return render_template('login.html')
+@app.route('/home')
+def home():
+    return render_template('home.html')
 
 @app.route('/index')
 def index():
@@ -299,6 +328,8 @@ def proveedores():
     cursor.close()
     conn.close()
     return render_template('proveedores.html', proveedores=proveedores)
+   
+
 
 if __name__ == '__main__':
     app.run(debug=True)

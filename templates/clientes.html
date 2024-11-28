@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Lista de Clientes</h1>
+
+<!-- Formulario para agregar clientes -->
+<form method="POST" action="{{ url_for('clientes') }}">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" required><br>
+
+    <label for="telefono">Teléfono:</label>
+    <input type="tel" id="telefono" name="telefono" required><br>
+
+    <label for="cedula">Cédula:</label>
+    <input type="text" id="cedula" name="cedula" required><br>
+
+    <label for="correo">Correo:</label>
+    <input type="email" id="correo" name="correo" required><br>
+
+    <label for="pais">País:</label>
+    <input type="text" id="pais" name="pais" required><br>
+
+    <label for="provincia">Provincia:</label>
+    <input type="text" id="provincia" name="provincia" required><br>
+
+    <label for="canton">Cantón:</label>
+    <input type="text" id="canton" name="canton" required><br>
+
+    <label for="distrito">Distrito:</label>
+    <input type="text" id="distrito" name="distrito" required><br>
+
+    <button type="submit">Agregar Cliente</button>
+</form>
+
+<hr>
+
+<!-- Tabla para listar clientes -->
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID Cliente</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Cédula</th>
+            <th>Correo</th>
+            <th>País</th>
+            <th>Provincia</th>
+            <th>Cantón</th>
+            <th>Distrito</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+            <td>{{ row[6] }}</td>
+            <td>{{ row[7] }}</td>
+            <td>{{ row[8] }}</td>
+            <td>{{ 'Activo' if row[9] == 1 else 'Inactivo' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

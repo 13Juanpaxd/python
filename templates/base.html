@@ -104,6 +104,10 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('proveedores') }}">Proveedores</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('clientes') }}">Clientes</a>
+                        </li>
+                        
                     </ul>
                     {% if session['user_id'] %}
                     <ul class="navbar-nav">
@@ -128,17 +132,44 @@
     </main>
 
     <!-- Footer -->
-    <footer>
-        <p>¡Síguenos en nuestras redes sociales!</p>
-        <ul>
-            <li>
-                <a href="https://www.facebook.com/tu_tienda" target="_blank"><i class="fab fa-facebook"></i></a>
-            </li>
-            <li>
-                <a href="https://www.instagram.com/tu_tienda" target="_blank"><i class="fab fa-instagram"></i></a>
-            </li>
-        </ul>
-        <p>&copy; 2024 Tu Tienda. Todos los derechos reservados.</p>
+    <footer class="footer">
+        <div class="container d-flex justify-content-between align-items-start py-4">
+            <!-- Sección izquierda: Redes sociales y derechos reservados -->
+            <div class="left-section text-left">
+                <p class="mb-2">¡Síguenos en nuestras redes sociales!</p>
+                <ul class="list-inline mb-2">
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/tu_tienda" target="_blank" class="text-white">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="https://www.instagram.com/tu_tienda" target="_blank" class="text-white">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </li>
+                </ul>
+                <p>&copy; 2024 Tu Tienda. Todos los derechos reservados.</p>
+            </div>
+   
+            <!-- Sección derecha: Atención al Cliente -->
+            <div class="right-section text-left">
+                <h5 class="mb-2">Atención al Cliente</h5>
+                <p class="mb-2">¿Necesitas ayuda? Contáctanos por:</p>
+                <ul class="list-inline mb-0">
+                    <li class="list-inline-item">
+                        <a href="https://wa.me/1234567890" target="_blank" class="text-white">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a href="mailto:soporte@tutienda.com" class="text-white">
+                            <i class="fas fa-envelope"></i> Correo Electrónico
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </footer>
 
     <!-- Bootstrap JS -->
