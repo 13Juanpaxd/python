@@ -9,9 +9,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto',
-        password='Proyecto',
-        dsn='localhost:1521/orcl',
+        user='Proyecto1',
+        password='Proyecto1',
+        dsn='localhost:1521/xe',
         encoding='UTF-8'
     )
     return connection
@@ -244,15 +244,22 @@ def inventario():
 def imagen(producto_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT Imagen FROM FIDE_INVENTARIO_TB WHERE ID_Producto = :producto_id', {'producto_id': producto_id})
-    row = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    if row and row[0]:
-        response = make_response(row[0].read())
-        response.headers.set('Content-Type', 'image/jpeg')
-        return response
-    return 'No image found', 404
+    try:
+        cursor.execute('SELECT Imagen FROM FIDE_INVENTARIO_TB WHERE ID_Producto = :producto_id', {'producto_id': producto_id})
+        row = cursor.fetchone()
+        if row and row[0]:
+            response = make_response(row[0].read())
+            # Ajusta el tipo de contenido según el formato de tu imagen (por ejemplo, JPEG, PNG)
+            response.headers.set('Content-Type', 'image/jpeg')
+            return response
+        else:
+            return 'No image found for product ID: {}'.format(producto_id), 404
+    except Exception as e:
+        print(f"Error fetching image: {str(e)}")
+        return 'Error fetching image', 500
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/clientes', methods=['GET', 'POST'])
 def clientes():
