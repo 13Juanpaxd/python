@@ -45,7 +45,7 @@
         {% for producto in productos %}
             <div class="col-md-4">
                 <div class="card module-card">
-                    <img src="{{ url_for('imagen', producto_id=producto[0]) }}" class="card-img-top" alt="{{ producto[1] }}">
+                    <img src="{{ url_for('imagen', producto_id=producto[0]) }}" alt="{{ producto[1] }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ producto[1] }}</h5>
                         <p class="card-text">{{ producto[4] }}</p>
@@ -58,3 +58,4 @@
     </div>
 </div>
 {% endblock %}
+ 
