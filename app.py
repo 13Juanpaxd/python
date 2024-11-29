@@ -18,12 +18,6 @@ def get_db_connection():
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    """
-    Esta función maneja la lógica de inicio de sesión.
-
-    Permite a los usuarios iniciar sesión como administradores o usuarios regulares.
-    Verifica las credenciales ingresadas y redirige al usuario a la página correspondiente.
-    """
 
     if request.method == 'POST':
         correo = request.form['correo']
