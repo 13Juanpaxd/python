@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Tu Tienda{% endblock %}</title>
+    <title>{% block title %}Inicio{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -17,18 +17,29 @@
         }
 
         main {
-            flex: 1;
-        }
+    flex: 1;
 
-        /* Header */
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+}
+
         header {
-            background: linear-gradient(45deg, #10568b, #257ec4);
+            background: linear-gradient(45deg, #1e3d75, #a7814a);
             color: white;
+            text-align: center;
+            padding: 10px 0;
         }
 
         header h1 {
             font-size: 2.5rem;
             font-weight: bold;
+            margin: 0;
         }
 
         nav a {
@@ -42,43 +53,60 @@
             text-decoration: none;
         }
 
-        /* Buttons */
-        .btn-primary, .btn-secondary {
-            transition: all 0.3s ease;
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
         }
 
-        .btn-primary:hover {
-            background-color: #f4a261;
-            border-color: #f4a261;
-        }
-
-        .btn-secondary:hover {
-            background-color: #457b9d;
-            border-color: #457b9d;
-        }
-
-        /* Footer */
-        footer {
-            background: linear-gradient(45deg, #257ec4, #10568b);
-            color: white;
+        .icon-card {
             text-align: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .icon-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-card i {
+            font-size: 3rem;
+            color: #1e3d75;
+            margin-bottom: 15px;
+        }
+
+        .icon-card h5 {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        footer {
+            background: linear-gradient(45deg, #1e3d75, #a7814a);
+            color: white;
             padding: 20px 0;
+            text-align: center;
         }
 
         footer ul {
             list-style: none;
+            padding: 0;
+            margin: 0;
             display: flex;
             justify-content: center;
-            padding: 0;
-        }
-
-        footer ul li {
-            margin: 0 15px;
+            gap: 15px;
         }
 
         footer ul li a {
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             transition: color 0.3s;
         }
 
@@ -87,99 +115,89 @@
         }
 
         footer p {
-            margin: 10px 0;
+            margin: 10px 0 0;
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="text-center py-4">
-        <div class="d-flex justify-content-center align-items-center">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" style="height: 50px; margin-right: 10px;">
-            <h1>Tu Tienda</h1>
-        </div>
+    <header>
+        <h1>FRIKILAND</h1>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
-                <a class="navbar-brand" href="{{ url_for('catalogo') }}">Inicio</a>
+                <a class="navbar-brand" href="{{ url_for('home') }}">Inicio</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('encargos') }}">
-                                <i class="fas fa-box"></i> Encargos
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('carrito') }}">
-                                <i class="fas fa-shopping-cart"></i> Carrito
-                            </a>
-                        </li>
-                    </ul>
-                    {% if session['user_id'] %}
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav">
-                        <!-- Submenú del usuario -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="{{ url_for('user_photo', user_id=session['user_id']) }}" alt="Usuario" class="rounded-circle" width="30" height="30">
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                                <a class="dropdown-item" href="{{ url_for('profile') }}">Perfil</a>
-                                <a class="dropdown-item" href="{{ url_for('envios') }}">Envíos</a>
-                                <a class="dropdown-item" href="{{ url_for('facturas') }}">Facturas</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Cerrar Sesión</a>
-                            </div>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('catalogo') }}"><i class="fas fa-th-large"></i> Catálogo</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('encargos') }}"><i class="fas fa-box"></i> Encargos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('carrito') }}"><i class="fas fa-shopping-cart"></i> Carrito</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('favoritos') }}"><i class="fas fa-heart"></i> Favoritos</a></li>
                     </ul>
-                    {% endif %}
                 </div>
             </div>
         </nav>
     </header>
-    <main class="container mt-4">
-        {% block content %}
-        <div class="container">
-            <h2 class="text-center my-4">Catálogo de Productos</h2>
-            <div class="row">
-                {% for producto in productos %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            <img src="{{ url_for('imagen', producto_id=producto[0]) }}" class="card-img-top" alt="{{ producto[1] }}" style="height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ producto[1] }}</h5>
-                                <p class="card-text">{{ producto[4] }}</p>
-                                <p class="card-text"><strong>Precio:</strong> ₡{{ producto[3] }}</p>
-                                <p class="card-text"><strong>Cantidad Disponible:</strong> {{ producto[5] }}</p>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+
+    <!-- Main Content -->
+    <main>
+        <div class="main-content">
+            <div class="icon-card">
+                <i class="fas fa-th-large text-warning"></i>
+                <h5>Catálogo</h5>
+                <a href="{{ url_for('catalogo') }}" class="btn btn-warning">Ver más</a>
+            </div>
+            <div class="icon-card">
+                <i class="fas fa-box text-primary"></i>
+                <h5>Encargos</h5>
+                <a href="{{ url_for('encargos') }}" class="btn btn-primary">Ver más</a>
+            </div>
+            <div class="icon-card">
+                <i class="fas fa-shopping-cart text-success"></i>
+                <h5>Carrito</h5>
+                <a href="{{ url_for('carrito') }}" class="btn btn-success">Ver más</a>
+            </div>
+            <div class="icon-card">
+                <i class="fas fa-heart text-danger"></i>
+                <h5>Favoritos</h5>
+                <a href="{{ url_for('favoritos') }}" class="btn btn-danger">Ver más</a>
+            </div>
+            <div class="icon-card">
+                <i class="fas fa-truck text-info"></i>
+                <h5>Envíos</h5>
+                <a href="{{ url_for('envios') }}" class="btn btn-info">Ver más</a>
+            </div>
+            <div class="icon-card">
+                <i class="fas fa-file-invoice text-dark"></i>
+                <h5>Facturas</h5>
+                <a href="{{ url_for('facturas') }}" class="btn btn-dark">Ver más</a>
             </div>
         </div>
-        {% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="footer mt-auto">
+    <footer class="footer">
         <div class="container d-flex justify-content-between align-items-start py-4">
+            <!-- Sección izquierda: Redes sociales y derechos reservados -->
             <div class="left-section text-left">
                 <p class="mb-2">¡Síguenos en nuestras redes sociales!</p>
                 <ul class="list-inline mb-2">
                     <li class="list-inline-item">
-                        <a href="https://www.facebook.com/tu_tienda" target="_blank" class="text-white">
+                        <a href="https://www.facebook.com/profile.php?id=61565799606598" target="_blank" class="text-white">
                             <i class="fab fa-facebook"></i>
                         </a>
                     </li>
                     <li class="list-inline-item">
-                        <a href="https://www.instagram.com/tu_tienda" target="_blank" class="text-white">
+                        <a href="https://www.instagram.com/frikilandplus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="text-white">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </li>
                 </ul>
                 <p>&copy; 2024 Tu Tienda. Todos los derechos reservados.</p>
             </div>
+   
+            <!-- Sección derecha: Atención al Cliente -->
             <div class="right-section text-left">
                 <h5 class="mb-2">Atención al Cliente</h5>
                 <p class="mb-2">¿Necesitas ayuda? Contáctanos por:</p>
@@ -198,10 +216,8 @@
             </div>
         </div>
     </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

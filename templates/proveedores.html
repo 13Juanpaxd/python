@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Encabezado -->
+    <h1 class="text-center mb-5 text-primary font-weight-bold">Gestión de Proveedores</h1>
+
+    <!-- Formulario para agregar proveedores -->
+    <div class="card shadow-lg mb-5">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="font-weight-bold">Agregar Proveedor</h3>
+        </div>
+        <div class="card-body bg-light p-4">
+            <form method="POST" action="{{ url_for('proveedores') }}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nombre" class="font-weight-bold">Nombre del Proveedor:</label>
+                            <input type="text" class="form-control rounded-pill" id="nombre" name="nombre" placeholder="Ingrese el nombre" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="telefono" class="font-weight-bold">Teléfono:</label>
+                            <input type="tel" class="form-control rounded-pill" id="telefono" name="telefono" placeholder="Ingrese el teléfono" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="correo" class="font-weight-bold">Correo Electrónico:</label>
+                            <input type="email" class="form-control rounded-pill" id="correo" name="correo" placeholder="Ingrese el correo" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="producto" class="font-weight-bold">Producto Ofrecido:</label>
+                            <input type="text" class="form-control rounded-pill" id="producto" name="producto" placeholder="Ingrese el producto ofrecido" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="precio" class="font-weight-bold">Precio del Producto:</label>
+                            <input type="number" step="0.01" class="form-control rounded-pill" id="precio" name="precio" placeholder="Ingrese el precio del producto" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow">Agregar Proveedor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla para listar proveedores -->
+    <div class="card shadow-lg">
+        <div class="card-header bg-secondary text-white text-center">
+            <h3 class="font-weight-bold">Proveedores Registrados</h3>
+        </div>
+        <div class="card-body p-4">
+            <table class="table table-hover table-striped table-bordered text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID Proveedor</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proveedor in proveedores %}
+                    <tr>
+                        <td>{{ proveedor[0] }}</td>
+                        <td>{{ proveedor[1] }}</td>
+                        <td>{{ proveedor[2] }}</td>
+                        <td>{{ proveedor[3] }}</td>
+                        <td>{{ proveedor[4] }}</td>
+                        <td>₡{{ proveedor[5] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

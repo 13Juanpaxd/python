@@ -9,9 +9,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto1',
-        password='Proyecto1',
-        dsn='localhost:1521/xe',
+        user='Proyecto',
+        password='Proyecto',
+        dsn='localhost:1521/orcl',
         encoding='UTF-8'
     )
     return connection
@@ -488,6 +488,7 @@ def catalogo():
             cursor.close()
         if conn:
             conn.close()
+            
 
 @app.route('/add_to_favoritos', methods=['POST'])
 def add_to_favoritos():
@@ -633,6 +634,49 @@ def agregar_favorito(producto_id):
         conn.close()
 
     return redirect(url_for('catalogo'))
+
+@app.route('/proveedores', methods=['GET', 'POST'])
+def proveedores_view():
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        id_proveedor = len(proveedores) + 1
+        nombre = request.form['nombre']
+        telefono = request.form['telefono']
+        correo = request.form['correo']
+        producto = request.form['producto']
+        precio = request.form['precio']
+        
+        # Guardar datos
+        proveedores.append((id_proveedor, nombre, telefono, correo, producto, float(precio)))
+        flash('Proveedor agregado correctamente.', 'success')
+        return redirect(url_for('proveedores_view'))
+    
+    return render_template('proveedores.html', proveedores=proveedores)
+
+
+@app.route('/carrito')
+def carrito_page():
+    total = sum(item['precio'] * item['cantidad'] for item in carrito)
+    return render_template('carrito.html', carrito=carrito, total=total)
+
+@app.route('/facturar', methods=['POST'])
+def facturar():
+    productos = request.form.getlist('productos[]')
+    precios = request.form.getlist('precios[]')
+    cantidades = request.form.getlist('cantidades[]')
+    total = request.form.get('total')
+
+    # Generar la factura (simplemente redirigiendo con datos)
+    factura = []
+    for i in range(len(productos)):
+        factura.append({
+            'producto': productos[i],
+            'precio': precios[i],
+            'cantidad': cantidades[i],
+            'subtotal': int(precios[i]) * int(cantidades[i])
+        })
+
+    return render_template('factura.html', factura=factura, total=total)
 
 if __name__ == '__main__':
     app.run(debug=True)
