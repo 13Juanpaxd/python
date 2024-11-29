@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response
+from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
 import cx_Oracle
 import os
 
@@ -492,6 +492,151 @@ def catalogo():
             cursor.close()
         if conn:
             conn.close()
+
+@app.route('/add_to_favoritos', methods=['POST'])
+def add_to_favoritos():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Debe iniciar sesión para agregar a favoritos'}), 403
+    
+    try:
+        producto_id = request.form.get('producto_id')
+        user_id = session['user_id']
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Verificar si el producto ya está en favoritos
+        cursor.execute("""
+            SELECT 1 FROM FIDE_FAVORITOS_TB 
+            WHERE ID_Cliente = :user_id AND ID_Producto = :producto_id
+        """, {'user_id': user_id, 'producto_id': producto_id})
+        
+        if cursor.fetchone():
+            return jsonify({'error': 'El producto ya está en favoritos'}), 400
+        
+        # Insertar en favoritos
+        cursor.execute("""
+            INSERT INTO FIDE_FAVORITOS_TB (ID_Cliente, ID_Producto) 
+            VALUES (:user_id, :producto_id)
+        """, {'user_id': user_id, 'producto_id': producto_id})
+        
+        conn.commit()
+        return jsonify({'success': 'Producto agregado a favoritos'})
+    
+    except Exception as e:
+        print(f"Error al agregar a favoritos: {e}")
+        return jsonify({'error': 'Error interno'}), 500
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/submit_feedback', methods=['POST'])
+def submit_feedback():
+    """Guarda el feedback de un producto en la base de datos."""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    producto_id = request.form['producto_id']
+    comentario = request.form.get('feedback', '')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            INSERT INTO FIDE_FEEDBACK_TB (ID_Cliente, ID_Producto, Comentario, Fecha) 
+            VALUES (:user_id, :producto_id, :comentario, SYSTIMESTAMP)
+        """, {
+            'user_id': session['user_id'],
+            'producto_id': producto_id,
+            'comentario': comentario
+        })
+        conn.commit()
+        flash('Gracias por tu feedback.', 'success')
+    except Exception as e:
+        flash(f'Error al enviar feedback: {e}', 'danger')
+    finally:
+        cursor.close()
+        conn.close()
+    
+    return redirect(url_for('catalogo'))
+
+
+@app.route('/feedback/<int:producto_id>')
+def feedback(producto_id):
+    """Muestra el feedback de un producto."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT f.Comentario, f.Fecha, c.Nombre 
+        FROM FIDE_FEEDBACK_TB f
+        JOIN FIDE_CLIENTES_TB c ON f.ID_Cliente = c.ID_Cliente
+        WHERE f.ID_Producto = :producto_id
+    """, {'producto_id': producto_id})
+    feedbacks = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('feedback.html', feedbacks=feedbacks, producto_id=producto_id)
+
+
+@app.route('/favoritos', methods=['GET'])
+def favoritos():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Obtener la lista de favoritos del usuario
+        user_id = session['user_id']
+        cursor.execute("""
+            SELECT f.ID_Producto, i.Nombre, i.Precio, i.Detalle
+            FROM FIDE_FAVORITOS_TB f
+            JOIN FIDE_INVENTARIO_TB i ON f.ID_Producto = i.ID_Producto
+            WHERE f.ID_Cliente = :user_id
+        """, {'user_id': user_id})
+        favoritos = cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
+
+    return render_template('favoritos.html', favoritos=favoritos)
+
+@app.route('/agregar_favorito/<int:producto_id>', methods=['POST'])
+def agregar_favorito(producto_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        user_id = session['user_id']
+
+        # Verificar si el producto ya está en favoritos
+        cursor.execute("""
+            SELECT COUNT(*) 
+            FROM FIDE_FAVORITOS_TB 
+            WHERE ID_Cliente = :user_id AND ID_Producto = :producto_id
+        """, {'user_id': user_id, 'producto_id': producto_id})
+        count = cursor.fetchone()[0]
+
+        if count == 0:
+            # Insertar en favoritos
+            cursor.execute("""
+                INSERT INTO FIDE_FAVORITOS_TB (ID_Cliente, ID_Producto)
+                VALUES (:user_id, :producto_id)
+            """, {'user_id': user_id, 'producto_id': producto_id})
+            conn.commit()
+            flash('Producto agregado a favoritos.', 'success')
+        else:
+            flash('Este producto ya está en tu lista de favoritos.', 'info')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('catalogo'))
 
 if __name__ == '__main__':
     app.run(debug=True)

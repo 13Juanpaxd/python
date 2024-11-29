@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoritos - Tu Tienda</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <header class="text-center py-4 bg-primary text-white">
+        <h1>Mis Favoritos</h1>
+        <a class="btn btn-light" href="{{ url_for('catalogo') }}">Volver al Catálogo</a>
+    </header>
+
+    <main class="container mt-4">
+        {% if favoritos %}
+            <div class="row">
+                {% for favorito in favoritos %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ favorito[1] }}</h5>
+                                <p class="card-text">{{ favorito[3] }}</p>
+                                <p class="card-text"><strong>Precio:</strong> ₡{{ favorito[2] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">Aún no tienes productos en favoritos.</p>
+        {% endif %}
+    </main>
+</body>
+</html>

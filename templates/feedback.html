@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - Producto {{ producto_id }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Feedback para el Producto {{ producto_id }}</h2>
+        {% if feedbacks %}
+            <ul class="list-group">
+                {% for comentario, fecha, cliente in feedbacks %}
+                    <li class="list-group-item">
+                        <strong>{{ cliente }}</strong>
+                        <p>{{ comentario }}</p>
+                        <small class="text-muted">{{ fecha }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No hay feedback para este producto.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
