@@ -137,18 +137,17 @@
         </nav>
     </header>
 
-    <!-- Main Content -->
     <main class="container mt-4">
         {% block content %}
         <div class="container">
             <h2 class="text-center">Encargos</h2>
-            <form method="post" enctype="multipart/form-data">
+            <form method="post">
                 <div class="form-group">
-                    <label for="producto">Producto</label>
-                    <input type="text" class="form-control" id="producto" name="producto" required>
+                    <label for="producto">Producto ID</label>
+                    <input type="number" class="form-control" id="producto" name="producto" required>
                 </div>
                 <div class="form-group">
-                    <label for="cantidad">Cantidad</label>
+                    <label for="cantidad">Plazo (días)</label>
                     <input type="number" class="form-control" id="cantidad" name="cantidad" required>
                 </div>
                 <div class="form-group">
@@ -163,9 +162,9 @@
                 <thead>
                     <tr>
                         <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Descripción</th>
-                        <th>Estado</th>
+                        <th>Plazo</th>
+                        <th>Fecha Inicial</th>
+                        <th>Fecha Límite</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -189,6 +188,8 @@
         </div>
         {% endblock %}
     </main>
+    
+    
     <footer class="footer">
         <div class="container d-flex justify-content-between align-items-start py-4">
             <!-- Sección izquierda: Redes sociales y derechos reservados -->

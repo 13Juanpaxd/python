@@ -9,9 +9,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto',
-        password='Proyecto',
-        dsn='localhost:1521/orcl',
+        user='Proyecto1',
+        password='Proyecto1',
+        dsn='localhost:1521/xe',
         encoding='UTF-8'
     )
     return connection
@@ -354,14 +354,13 @@ def facturas():
     """
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
-    # Aquí puedes agregar lógica para obtener facturas desde la base de datos si es necesario
-    return render_template('facturas.html')  # Asegúrate de tener el archivo facturas.html
+
+    return render_template('facturas.html') 
 
 @app.route('/encargos', methods=['GET', 'POST'])
 def encargos():
     if 'user_id' not in session:
-        return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+        return redirect(url_for('login'))
 
     conn = None
     cursor = None
@@ -371,31 +370,28 @@ def encargos():
 
         if request.method == 'POST':
             # Datos del formulario
-            producto = request.form['producto']
-            cantidad = request.form['cantidad']
-            detalles = request.form.get('descripcion', '')  # Usa una cadena vacía si no se proporciona
-            user_id = session['user_id']
-
-            # Insertar encargo en la base de datos
+            producto_id = request.form['producto']
+            cliente_id = session['user_id']
+            plazo = request.form['cantidad']
+            
             cursor.execute("""
                 INSERT INTO FIDE_ENCARGOS_TB 
-                (ID_Cliente, Producto, Cantidad, Detalles, Fecha_Encargo, Estado) 
-                VALUES (:user_id, :producto, :cantidad, :detalles, SYSTIMESTAMP, 'Pendiente')
+                (Producto_ID, Cliente_ID, Plazo, Fecha_Inicial, Fecha_Limite) 
+                VALUES (:producto_id, :cliente_id, :plazo, SYSTIMESTAMP, SYSTIMESTAMP + NUMTODSINTERVAL(:plazo, 'DAY'))
             """, {
-                'user_id': user_id,
-                'producto': producto,
-                'cantidad': cantidad,
-                'detalles': detalles
+                'producto_id': producto_id,
+                'cliente_id': cliente_id,
+                'plazo': plazo
             })
             conn.commit()
             flash('Encargo realizado con éxito.', 'success')
 
         # Obtener encargos del usuario
         cursor.execute("""
-            SELECT Producto, Cantidad, Detalles, Estado 
+            SELECT Producto_ID, Plazo, TO_CHAR(Fecha_Inicial, 'YYYY-MM-DD'), TO_CHAR(Fecha_Limite, 'YYYY-MM-DD') 
             FROM FIDE_ENCARGOS_TB 
-            WHERE ID_Cliente = :user_id
-        """, {'user_id': session['user_id']})
+            WHERE Cliente_ID = :cliente_id
+        """, {'cliente_id': session['user_id']})
         encargos = cursor.fetchall()
 
         return render_template('encargos.html', encargos=encargos)
@@ -409,7 +405,7 @@ def encargos():
             cursor.close()
         if conn:
             conn.close()
-
+    
 
 @app.route('/carrito', methods=['GET', 'POST'])
 def carrito():
@@ -640,4 +636,3 @@ def agregar_favorito(producto_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
