@@ -5,18 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tu Tienda{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        main {
+            flex: 1;
         }
 
         /* Header */
         header {
-            background: linear-gradient(45deg, #1d3557, #457b9d);
+            background: linear-gradient(45deg,#10568b, #257ec4 );
             color: white;
         }
 
@@ -53,7 +59,7 @@
 
         /* Footer */
         footer {
-            background: linear-gradient(45deg, #457b9d, #1d3557);
+            background: linear-gradient(45deg, #257ec4, #10568b);
             color: white;
             text-align: center;
             padding: 20px 0;
@@ -91,7 +97,7 @@
         <h1>Tu Tienda</h1>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
-                <a class="navbar-brand" href="{{ url_for('index') }}">Inicio</a>
+                <a class="navbar-brand" href="{{ url_for('home') }}">Inicio</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -136,49 +142,53 @@
         {% block content %}
         <div class="container">
             <h2 class="text-center">Encargos</h2>
-    <form method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="producto">Producto</label>
-            <input type="text" class="form-control" id="producto" name="producto" required>
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="producto">Producto</label>
+                    <input type="text" class="form-control" id="producto" name="producto" required>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción o Detalles</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Realizar Encargo</button>
+            </form>
+            <hr>
+            <h3>Historial de Encargos</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if encargos %}
+                        {% for encargo in encargos %}
+                        <tr>
+                            <td>{{ encargo[0] }}</td>
+                            <td>{{ encargo[1] }}</td>
+                            <td>{{ encargo[2] }}</td>
+                            <td>{{ encargo[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">No hay encargos realizados.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            
         </div>
-        <div class="form-group">
-            <label for="cantidad">Cantidad</label>
-            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
-        </div>
-        <div class="form-group">
-            <label for="descripcion">Descripción o Detalles</label>
-            <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Realizar Encargo</button>
-    </form>
-    <hr>
-    <h3>Historial de Encargos</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Descripción</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for encargo in encargos %}
-            <tr>
-                <td>{{ encargo[0] }}</td>
-                <td>{{ encargo[1] }}</td>
-                <td>{{ encargo[2] }}</td>
-                <td>{{ encargo[3] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-{% endblock %}
-
+        {% endblock %}
     </main>
-
-    <!-- Footer -->
     <footer class="footer">
         <div class="container d-flex justify-content-between align-items-start py-4">
             <!-- Sección izquierda: Redes sociales y derechos reservados -->
@@ -186,12 +196,12 @@
                 <p class="mb-2">¡Síguenos en nuestras redes sociales!</p>
                 <ul class="list-inline mb-2">
                     <li class="list-inline-item">
-                        <a href="https://www.facebook.com/tu_tienda" target="_blank" class="text-white">
+                        <a href="https://www.facebook.com/profile.php?id=61565799606598" target="_blank" class="text-white">
                             <i class="fab fa-facebook"></i>
                         </a>
                     </li>
                     <li class="list-inline-item">
-                        <a href="https://www.instagram.com/tu_tienda" target="_blank" class="text-white">
+                        <a href="https://www.instagram.com/frikilandplus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="text-white">
                             <i class="fab fa-instagram"></i>
                         </a>
                     </li>
@@ -218,8 +228,6 @@
             </div>
         </div>
     </footer>
-
-    <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

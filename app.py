@@ -9,9 +9,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto1',
-        password='Proyecto1',
-        dsn='localhost:1521/xe',
+        user='Proyecto',
+        password='Proyecto',
+        dsn='localhost:1521/orcl',
         encoding='UTF-8'
     )
     return connection
@@ -362,6 +362,7 @@ def facturas():
 def encargos():
     if 'user_id' not in session:
         return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+
     conn = None
     cursor = None
     try:
@@ -372,7 +373,7 @@ def encargos():
             # Datos del formulario
             producto = request.form['producto']
             cantidad = request.form['cantidad']
-            detalles = request.form['detalles']
+            detalles = request.form.get('descripcion', '')  # Usa una cadena vacía si no se proporciona
             user_id = session['user_id']
 
             # Insertar encargo en la base de datos
@@ -391,7 +392,7 @@ def encargos():
 
         # Obtener encargos del usuario
         cursor.execute("""
-            SELECT ID_Encargo, Producto, Cantidad, Detalles, Fecha_Encargo, Estado 
+            SELECT Producto, Cantidad, Detalles, Estado 
             FROM FIDE_ENCARGOS_TB 
             WHERE ID_Cliente = :user_id
         """, {'user_id': session['user_id']})
@@ -408,6 +409,7 @@ def encargos():
             cursor.close()
         if conn:
             conn.close()
+
 
 @app.route('/carrito', methods=['GET', 'POST'])
 def carrito():
@@ -462,6 +464,34 @@ def carrito():
         if conn:
             conn.close()
 
+@app.route('/catalogo', methods=['GET'])
+def catalogo():
+    """
+    Muestra el catálogo de productos desde la base de datos.
+    """
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Obtener los productos desde la base de datos
+        cursor.execute('SELECT ID_Producto, Nombre, Imagen, Precio, Detalle, Cantidad FROM FIDE_INVENTARIO_TB')
+        productos = cursor.fetchall()
+
+        return render_template('catalogo.html', productos=productos)
+
+    except Exception as e:
+        print(f"Error al cargar el catálogo: {e}")
+        flash('Error al cargar el catálogo.', 'error')
+        return render_template('catalogo.html', productos=[])
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
