@@ -97,20 +97,18 @@
         </nav>
     </header>
     <main class="container mt-4">
-        {% block content %}
-        <h2 class="text-center">Carrito de Compras</h2>
-        {% if carrito %}
-        <form method="POST" action="{{ url_for('facturar') }}">
-            <table class="table table-hover mt-4">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Cantidad</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <h2 class="text-center mb-4 text-primary">Carrito de Compras</h2>
+        <table class="table table-hover table-striped table-bordered text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if carrito %}
                     {% for producto in carrito %}
                     <tr>
                         <td>{{ producto[1] }}</td>
@@ -123,26 +121,31 @@
                         <input type="hidden" name="cantidades[]" value="{{ producto[4] }}">
                     </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-            <div class="text-right mt-3">
-                <h4>Total General: ₡{{ total }}</h4>
-                <input type="hidden" name="total" value="{{ total }}">
-            </div>
-            <div class="text-center mt-4">
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">No hay productos en el carrito.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        {% if carrito %}
+        <div class="text-right mt-3">
+            <h4>Total General: ₡{{ total }}</h4>
+            <input type="hidden" name="total" value="{{ total }}">
+        </div>
+        <div class="text-center mt-4">
+            <form method="POST" action="{{ url_for('facturar') }}">
                 <button type="submit" class="btn btn-primary btn-lg">
                     <i class="fas fa-receipt"></i> Facturar
                 </button>
-                <a href="{{ url_for('vaciar_carrito') }}" class="btn btn-danger btn-lg">
-                    <i class="fas fa-trash-alt"></i> Vaciar Carrito
-                </a>
-            </div>
-        </form>
-        {% else %}
-        <p class="text-center text-muted mt-4">No hay productos en el carrito.</p>
+            </form>
+            <a href="{{ url_for('vaciar_carrito') }}" class="btn btn-danger btn-lg">
+                <i class="fas fa-trash-alt"></i> Vaciar Carrito
+            </a>
+        </div>
         {% endif %}
-        {% endblock %}
     </main>
+    
     <footer class="footer">
         <div class="container d-flex justify-content-between align-items-start py-4">
             <!-- Sección izquierda: Redes sociales y derechos reservados -->
