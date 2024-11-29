@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Favoritos - Tu Tienda{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4 text-primary">Mis Productos Favoritos</h2>
+    <table class="table table-hover table-striped table-bordered text-center">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID Producto</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Detalle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if favoritos %}
+                {% for favorito in favoritos %}
+                <tr>
+                    <td>{{ favorito[0] }}</td>
+                    <td>{{ favorito[1] }}</td>
+                    <td>₡{{ favorito[2] }}</td>
+                    <td>{{ favorito[3] }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No tienes productos favoritos.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

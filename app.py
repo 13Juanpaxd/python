@@ -9,9 +9,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto',
-        password='Proyecto',
-        dsn='localhost:1521/orcl',
+        user='Proyecto1',
+        password='Proyecto1',
+        dsn='localhost:1521/xe',
         encoding='UTF-8'
     )
     return connection
@@ -570,7 +570,6 @@ def feedback(producto_id):
     conn.close()
     return render_template('feedback.html', feedbacks=feedbacks, producto_id=producto_id)
 
-
 @app.route('/favoritos', methods=['GET'])
 def favoritos():
     if 'user_id' not in session:
@@ -583,10 +582,10 @@ def favoritos():
         # Obtener la lista de favoritos del usuario
         user_id = session['user_id']
         cursor.execute("""
-            SELECT f.ID_Producto, i.Nombre, i.Precio, i.Detalle
-            FROM FIDE_FAVORITOS_TB f
-            JOIN FIDE_INVENTARIO_TB i ON f.ID_Producto = i.ID_Producto
-            WHERE f.ID_Cliente = :user_id
+            SELECT f.Producto_ID, i.Nombre, i.Precio, i.Detalle
+            FROM FIDE_FAVORITO_TB f
+            JOIN FIDE_INVENTARIO_TB i ON f.Producto_ID = i.ID_Producto
+            WHERE f.Cliente_ID = :user_id
         """, {'user_id': user_id})
         favoritos = cursor.fetchall()
     finally:
