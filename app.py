@@ -26,20 +26,15 @@ def login():
     """
 
     if request.method == 'POST':
-        # Obtener los datos del formulario
         correo = request.form['correo']
         cedula = request.form['cedula']
 
-        # Verificar si es un administrador
         if correo == 'ADMIN@ADMIN.AD' and cedula == '987654321':
-            # Inicio de sesión exitoso para administrador
-            session['user_id'] = 1  # Reemplaza 1 con el ID real del administrador en tu base de datos
+            session['user_id'] = 1  
             session['is_admin'] = True
-            return redirect(url_for('index'))  # Redirigir al panel de administrador
+            return redirect(url_for('index'))  
 
-        # Verificar si es un usuario regular
         else:
-            # Conectar a la base de datos y buscar al usuario
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute('SELECT ID_Cliente FROM FIDE_CLIENTES_TB WHERE Correo = :correo AND Cedula = :cedula', {'correo': correo, 'cedula': cedula})
@@ -47,17 +42,14 @@ def login():
             cursor.close()
             conn.close()
 
-            # Si se encontró al usuario, iniciar sesión
             if user:
                 session['user_id'] = user[0]
                 session['is_admin'] = False
-                return redirect(url_for('home'))  # Redirigir a la página principal del usuario
+                return redirect(url_for('home'))  
 
-            # Si no se encontró al usuario, mostrar un mensaje de error
             else:
                 flash('Correo o cédula incorrectos. Inténtelo de nuevo.')
 
-    # Mostrar el formulario de inicio de sesión
     return render_template('login.html')
 @app.route('/home')
 def home():
@@ -249,7 +241,7 @@ def imagen(producto_id):
         row = cursor.fetchone()
         if row and row[0]:
             response = make_response(row[0].read())
-            # Ajusta el tipo de contenido según el formato de tu imagen (por ejemplo, JPEG, PNG)
+            
             response.headers.set('Content-Type', 'image/jpeg')
             return response
         else:
@@ -339,8 +331,7 @@ def envios():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    # Aquí puedes agregar lógica para obtener envíos desde la base de datos si es necesario
-    return render_template('envios.html')  # Asegúrate de tener el archivo envios.html
+    return render_template('envios.html')  
 
 @app.route('/facturas')
 def facturas():
@@ -364,7 +355,6 @@ def encargos():
         cursor = conn.cursor()
 
         if request.method == 'POST':
-            # Datos del formulario
             producto_id = request.form['producto']
             cliente_id = session['user_id']
             plazo = request.form['cantidad']
@@ -381,7 +371,6 @@ def encargos():
             conn.commit()
             flash('Encargo realizado con éxito.', 'success')
 
-        # Obtener encargos del usuario
         cursor.execute("""
             SELECT Producto_ID, Plazo, TO_CHAR(Fecha_Inicial, 'YYYY-MM-DD'), TO_CHAR(Fecha_Limite, 'YYYY-MM-DD') 
             FROM FIDE_ENCARGOS_TB 
@@ -405,7 +394,7 @@ def encargos():
 @app.route('/carrito', methods=['GET', 'POST'])
 def carrito():
     if 'user_id' not in session:
-        return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+        return redirect(url_for('login'))  
     conn = None
     cursor = None
     try:
@@ -413,12 +402,10 @@ def carrito():
         cursor = conn.cursor()
 
         if request.method == 'POST':
-            # Datos del formulario
             producto_id = request.form['producto_id']
             cantidad = request.form['cantidad']
             user_id = session['user_id']
 
-            # Insertar producto en el carrito
             cursor.execute("""
                 INSERT INTO FIDE_CARRITO_TB 
                 (ID_Cliente, ID_Producto, Cantidad) 
@@ -431,7 +418,6 @@ def carrito():
             conn.commit()
             flash('Producto añadido al carrito.', 'success')
 
-        # Obtener productos del carrito
         cursor.execute("""
             SELECT c.ID_Producto, i.Nombre, c.Cantidad, i.Precio, (c.Cantidad * i.Precio) AS Total
             FROM FIDE_CARRITO_TB c
@@ -440,7 +426,6 @@ def carrito():
         """, {'user_id': session['user_id']})
         carrito = cursor.fetchall()
 
-        # Calcular el total general
         total = sum(item[4] for item in carrito)
 
         return render_template('carrito.html', carrito=carrito, total=total)
@@ -461,14 +446,13 @@ def catalogo():
     Muestra el catálogo de productos desde la base de datos.
     """
     if 'user_id' not in session:
-        return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+        return redirect(url_for('login'))  
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Obtener los productos desde la base de datos
         cursor.execute('SELECT ID_Producto, Nombre, Imagen, Precio, Detalle, Cantidad FROM FIDE_INVENTARIO_TB')
         productos = cursor.fetchall()
 
@@ -497,7 +481,6 @@ def add_to_favoritos():
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Verificar si el producto ya está en favoritos
         cursor.execute("""
             SELECT 1 FROM FIDE_FAVORITOS_TB 
             WHERE ID_Cliente = :user_id AND ID_Producto = :producto_id
@@ -506,7 +489,6 @@ def add_to_favoritos():
         if cursor.fetchone():
             return jsonify({'error': 'El producto ya está en favoritos'}), 400
         
-        # Insertar en favoritos
         cursor.execute("""
             INSERT INTO FIDE_FAVORITOS_TB (ID_Cliente, ID_Producto) 
             VALUES (:user_id, :producto_id)
@@ -573,13 +555,13 @@ def feedback(producto_id):
 @app.route('/favoritos', methods=['GET'])
 def favoritos():
     if 'user_id' not in session:
-        return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+        return redirect(url_for('login')) 
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
-        # Obtener la lista de favoritos del usuario
+        
         user_id = session['user_id']
         cursor.execute("""
             SELECT f.Producto_ID, i.Nombre, i.Precio, i.Detalle
@@ -597,7 +579,7 @@ def favoritos():
 @app.route('/agregar_favorito/<int:producto_id>', methods=['POST'])
 def agregar_favorito(producto_id):
     if 'user_id' not in session:
-        return redirect(url_for('login'))  # Redirige al login si no hay sesión activa
+        return redirect(url_for('login'))  
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -605,7 +587,6 @@ def agregar_favorito(producto_id):
     try:
         user_id = session['user_id']
 
-        # Verificar si el producto ya está en favoritos
         cursor.execute("""
             SELECT COUNT(*) 
             FROM FIDE_FAVORITOS_TB 
@@ -614,7 +595,7 @@ def agregar_favorito(producto_id):
         count = cursor.fetchone()[0]
 
         if count == 0:
-            # Insertar en favoritos
+            
             cursor.execute("""
                 INSERT INTO FIDE_FAVORITOS_TB (ID_Cliente, ID_Producto)
                 VALUES (:user_id, :producto_id)
@@ -632,7 +613,7 @@ def agregar_favorito(producto_id):
 @app.route('/proveedores', methods=['GET', 'POST'])
 def proveedores_view():
     if request.method == 'POST':
-        # Obtener datos del formulario
+        
         id_proveedor = len(proveedores) + 1
         nombre = request.form['nombre']
         telefono = request.form['telefono']
@@ -640,7 +621,6 @@ def proveedores_view():
         producto = request.form['producto']
         precio = request.form['precio']
         
-        # Guardar datos
         proveedores.append((id_proveedor, nombre, telefono, correo, producto, float(precio)))
         flash('Proveedor agregado correctamente.', 'success')
         return redirect(url_for('proveedores_view'))
@@ -660,7 +640,6 @@ def facturar():
     cantidades = request.form.getlist('cantidades[]')
     total = request.form.get('total')
 
-    # Generar la factura (simplemente redirigiendo con datos)
     factura = []
     for i in range(len(productos)):
         factura.append({
