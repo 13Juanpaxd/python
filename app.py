@@ -9,9 +9,9 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def get_db_connection():
     connection = cx_Oracle.connect(
-        user='Proyecto',
-        password='Proyecto',
-        dsn='localhost:1521/orcl',
+        user='Proyecto1',
+        password='Proyecto1',
+        dsn='localhost:1521/xe',
         encoding='UTF-8'
     )
     return connection
@@ -305,37 +305,32 @@ def clientes():
 def proveedores():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    
     conn = get_db_connection()
     cursor = conn.cursor()
+    
     if request.method == 'POST':
         nombre = request.form['nombre']
-        contacto = request.form['contacto']
-        telefono = request.form['telefono']
-        correo = request.form['correo']
-        direccion = request.form['direccion']
+        detalles = request.form['detalles']
 
         cursor.execute("""
             INSERT INTO FIDE_PROVEEDORES_TB 
-            (Nombre, Contacto, Telefono, Correo, Direccion)
-            VALUES (:nombre, :contacto, :telefono, :correo, :direccion)
+            (Nombre, Detalles)
+            VALUES (:nombre, :detalles)
         """, {
             'nombre': nombre,
-            'contacto': contacto,
-            'telefono': telefono,
-            'correo': correo,
-            'direccion': direccion
+            'detalles': detalles
         })
         conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect(url_for('proveedores'))
-
-    cursor.execute('SELECT ID_Proveedor, Nombre, Contacto, Telefono, Correo, Direccion FROM FIDE_PROVEEDORES_TB')
+        flash('Proveedor agregado con éxito', 'success')
+    
+    cursor.execute('SELECT ID_Proveedor, Nombre, Detalles FROM FIDE_PROVEEDORES_TB')
     proveedores = cursor.fetchall()
     cursor.close()
     conn.close()
     return render_template('proveedores.html', proveedores=proveedores)
-   
+
+
 @app.route('/envios')
 def envios():
     """
