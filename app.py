@@ -645,5 +645,15 @@ def facturar():
 
     return render_template('factura.html', factura=factura, total=total)
 
+
+@app.route('/agregar_al_carrito/<int:producto_id>')
+def agregar_al_carrito(producto_id):
+    
+    return redirect(url_for('catalogo'))
+
+@app.route('/agregar_a_favoritos/<int:producto_id>')
+def agregar_a_favoritos(producto_id):
+
+    return redirect(url_for('catalogo'))
 if __name__ == '__main__':
     app.run(debug=True)

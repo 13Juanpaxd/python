@@ -3,13 +3,14 @@
 {% block title %}Inventario - Tu Tienda{% endblock %}
  
 {% block content %}
+
 <div class="container my-4">
-    <h2 class="text-center text-primary mb-4">Gestión de Inventario</h2>
-    
+    <h1 class="text-center mb-5 text-primary font-weight-bold">Gestión de Inventario</h1>
+Productos Registrados
     <!-- Formulario para añadir productos -->
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white text-center">
-            <h4>Añadir Producto</h4>
+            <h3 class="font-weight-bold">Añadir Producto</h3>
         </div>
         <div class="card-body">
             <form method="post" enctype="multipart/form-data">
@@ -58,11 +59,10 @@
         </div>
     </div>
 
-    <!-- Listado de productos -->
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white text-center">
-            <h4>Productos Registrados</h4>
-        </div>
+    <!-- Aqui esta Listado de productos -->
+    <div class="card-header bg-primary text-white text-center">
+        <h3 class="font-weight-bold">Productos Registrados</h3>
+    </div>
         <div class="card-body">
             <div class="row">
                 {% for producto in productos %}
