@@ -64,7 +64,7 @@
 
         .icon-card {
             text-align: center;
-            background: white;
+            background: rgb(255, 255, 255);
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
@@ -73,7 +73,7 @@
 
         .icon-card:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 12px rgba(61, 16, 224, 0.2);
         }
 
         .icon-card i {
@@ -115,14 +115,28 @@
         }
 
         footer p {
-            margin: 10px 0 0;
+            margin: 50px 0 0;
         }
     </style>
 </head>
-<body>
-    <!-- Header -->
-    <header>
-        <h1>FRIKILAND</h1>
+<style>
+        .logo-container {
+            position: relative;
+            top: 0;
+            left: 0;
+            padding-left: 600px;
+        }
+        .logo {
+            height: 50px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+    </style>
+    <header class="text-center py-4">
+        <div class="d-flex justify-content-start align-items-center logo-container">
+            <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo" class="logo">
+            <h1>FRIKILAND</h1>
+        </div>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a class="navbar-brand" href="{{ url_for('home') }}">Inicio</a>
