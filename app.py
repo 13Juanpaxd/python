@@ -1,17 +1,29 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, make_response, jsonify
 import cx_Oracle
 import os
+from flask_mail import Mail, Message
+from flask import jsonify
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'nicoleobregon198@gmail.com'  # Cambia a tu correo
+app.config['MAIL_PASSWORD'] = 'Nicoleobregon12?'         # Cambia a tu contraseña
+app.config['MAIL_DEFAULT_SENDER'] = 'Nicoleobregon198@gmail.com'
+
+mail = Mail(app)
+
 def get_db_connection():
     connection = cx_Oracle.connect(
         user='ProyectoDefinitivo',
         password='ProyectoDefinitivo',
-        dsn='localhost:1521/XE',
+        dsn='localhost:1521/orcl',
         encoding='UTF-8'
     )
     return connection
@@ -54,6 +66,7 @@ def index():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     return render_template('index.html')
+    
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -89,9 +102,21 @@ def register():
         conn.commit()
         cursor.close()
         conn.close()
-        flash('Usuario registrado exitosamente. Ahora puede iniciar sesión.')
+        
+        try:
+            msg = Message(
+                '¡Registro exitoso!',
+                recipients=[correo]
+            )
+            msg.body = f"Hola {nombre},\n\nGracias por registrarte en Frikiland. Tu usuario ha sido creado exitosamente.\n\n¡Bienvenido!"
+            mail.send(msg)
+            flash('Usuario registrado exitosamente. Se ha enviado un correo de confirmación.')
+        except Exception as e:
+            flash(f'Error al enviar el correo: {str(e)}', 'danger')
+
         return redirect(url_for('login'))
     return render_template('register.html')
+
 
 @app.route('/logout')
 def logout():
@@ -453,7 +478,7 @@ def catalogo():
         return render_template('catalogo.html', productos=productos)
 
     except Exception as e:
-        print(f"Error al cargar el catálogo: {e}")
+        print(f"Error al cargar el catálogo: f{e}")
         flash('Error al cargar el catálogo.', 'error')
         return render_template('catalogo.html', productos=[])
     finally:
@@ -462,6 +487,19 @@ def catalogo():
         if conn:
             conn.close()
             
+@app.route('/add_to_favorites', methods=['POST'])
+def add_to_favorites():
+    producto_id = request.form.get('producto_id')
+    # Lógica para añadir a favoritos
+    flash('Producto añadido a favoritos.')
+    return redirect(url_for('favoritos'))  # Redirige al catálogo
+
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    producto_id = request.form.get('producto_id')
+    # Lógica para añadir al carrito
+    flash('Producto añadido al carrito.')
+    return redirect(url_for('carrito'))  # Redirige al catálogo
 
 @app.route('/add_to_favoritos', methods=['POST'])
 def add_to_favoritos():

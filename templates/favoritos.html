@@ -136,34 +136,40 @@
         
     </header>
     <main class="container mt-4">
-        <h2 class="text-center mb-4 text-primary">Mis Productos Favoritos</h2>
-        <table class="table table-hover table-striped table-bordered text-center">
-            <thead class="thead-dark">
+    <h2 class="text-center mb-4 text-primary">Mis Productos Favoritos</h2>
+    <table class="table table-hover table-striped table-bordered text-center">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID Producto</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Detalle</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody id="favorites-body">
+            {% if favoritos %}
+                {% for favorito in favoritos %}
                 <tr>
-                    <th>ID Producto</th>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Detalle</th>
+                    <td>{{ favorito[0] }}</td>
+                    <td>{{ favorito[1] }}</td>
+                    <td>₡{{ favorito[2] }}</td>
+                    <td>{{ favorito[3] }}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="removeFromFavorites({{ favorito[0] }})">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% if favoritos %}
-                    {% for favorito in favoritos %}
-                    <tr>
-                        <td>{{ favorito[0] }}</td>
-                        <td>{{ favorito[1] }}</td>
-                        <td>₡{{ favorito[2] }}</td>
-                        <td>{{ favorito[3] }}</td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="4" class="text-center">No tienes productos favoritos.</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </main>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">No tienes productos favoritos.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</main>
 
     <!-- Footer -->
     <footer class="footer">
