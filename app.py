@@ -23,7 +23,7 @@ def get_db_connection():
     connection = cx_Oracle.connect(
         user='ProyectoDefinitivo',
         password='ProyectoDefinitivo',
-        dsn='localhost:1521/orcl',
+        dsn='localhost:1521/xe',
         encoding='UTF-8'
     )
     return connection
