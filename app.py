@@ -227,20 +227,22 @@ def user_photo(user_id):
 def mostrar_foto(cliente_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    cursor.execute("SELECT Foto FROM FIDE_CLIENTES_TB WHERE ID_Cliente = :cliente_id", {'cliente_id': cliente_id})
-    foto = cursor.fetchone()[0]
-
-    cursor.close()
-    conn.close()
-
-    if foto:
-        response = make_response(foto)
-        response.headers.set('Content-Type', 'image/jpeg')
-        return response
-    else:
-        return 'No hay foto de perfil disponible', 404
-
+    try:
+        cursor.execute("SELECT Foto FROM FIDE_CLIENTES_TB WHERE ID_Cliente = :cliente_id", {'cliente_id': cliente_id})
+        row = cursor.fetchone()
+        if row and row[0]:
+            response = make_response(row[0].read())
+            response.headers.set('Content-Type', 'image/jpeg')
+            return response
+        else:
+            response = requests.get('https://activosyvalores.com/assets/media/media_user/avar_user_default.png')
+            return make_response(response.content)
+    except Exception as e:
+        print(f"Error fetching image: {str(e)}")
+        return 'Error fetching image', 500
+    finally:
+        cursor.close()
+        conn.close()
 
 
 #############################################################################################################
@@ -707,53 +709,11 @@ def catalogo():
 
 #############################################################################################################
 
-@app.route('/submit_feedback', methods=['POST'])
-def submit_feedback():
-    """Guarda el feedback de un producto en la base de datos."""
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    producto_id = request.form['producto_id']
-    comentario = request.form.get('feedback', '')
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("""
-            INSERT INTO FIDE_FEEDBACK_TB (ID_Cliente, ID_Producto, Comentario, Fecha) 
-            VALUES (:user_id, :producto_id, :comentario, SYSTIMESTAMP)
-        """, {
-            'user_id': session['user_id'],
-            'producto_id': producto_id,
-            'comentario': comentario
-        })
-        conn.commit()
-        flash('Gracias por tu feedback.', 'success')
-    except Exception as e:
-        flash(f'Error al enviar feedback: {e}', 'danger')
-    finally:
-        cursor.close()
-        conn.close()
-    
-    return redirect(url_for('catalogo'))
 
 #############################################################################################################
 
-@app.route('/feedback/<int:producto_id>')
-def feedback(producto_id):
-    """Muestra el feedback de un producto."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT f.Comentario, f.Fecha, c.Nombre 
-        FROM FIDE_FEEDBACK_TB f
-        JOIN FIDE_CLIENTES_TB c ON f.ID_Cliente = c.ID_Cliente
-        WHERE f.ID_Producto = :producto_id
-    """, {'producto_id': producto_id})
-    feedbacks = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return render_template('feedback.html', feedbacks=feedbacks, producto_id=producto_id)
+
 
 #############################################################################################################
 @app.route('/favoritos', methods=['GET'])
@@ -992,6 +952,62 @@ def eliminar_del_carrito(producto_id):
     return redirect(url_for('carrito'))
 
 #############################################################################################################
+
+@app.route('/feedback', methods=['GET', 'POST'])
+def feedback():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Obtener productos del inventario
+    cursor.execute("SELECT ID_Producto, Nombre, Imagen FROM FIDE_INVENTARIO_TB")
+    productos = cursor.fetchall()
+
+    # Obtener comentarios para cada producto
+    comentarios = {}
+    for producto in productos:
+        cursor.execute("""
+            SELECT Comentario 
+            FROM FIDE_FEEDBACK_TB 
+            WHERE Producto_ID = :producto_id 
+            ORDER BY ID_Feedback DESC 
+            FETCH FIRST 3 ROWS ONLY
+        """, {'producto_id': producto[0]})
+        comentarios[producto[0]] = [row[0] for row in cursor.fetchall()]
+
+    cursor.close()
+    conn.close()
+
+    return render_template('feedback.html', productos=productos, comentarios=comentarios)
+
+#############################################################################################################
+
+@app.route('/comentar/<int:producto_id>', methods=['POST'])
+def comentar(producto_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    comentario = request.form['comentario']
+    user_id = session['user_id']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO FIDE_FEEDBACK_TB (Cliente_ID, Comentario, Producto_ID)
+        VALUES (:cliente_id, :comentario, :producto_id)
+    """, {'cliente_id': user_id, 'comentario': comentario, 'producto_id': producto_id})
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    flash('Comentario añadido con éxito.', 'success')
+    return redirect(url_for('feedback'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

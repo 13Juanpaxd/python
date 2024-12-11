@@ -129,7 +129,7 @@
                             <img src="{{ url_for('user_photo', user_id=session['user_id']) }}" alt="Usuario" class="rounded-circle" width="30" height="30">
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                            <a class="dropdown-item" href="#">Perfil</a>
+                            <a class="dropdown-item" href="{{ url_for('perfil') }}">Perfil</a>
                             <a class="dropdown-item" href="{{ url_for('envios') }}">Envíos</a>
                             <a class="dropdown-item" href="{{ url_for('facturas') }}">Facturas</a>
                             <div class="dropdown-divider"></div>

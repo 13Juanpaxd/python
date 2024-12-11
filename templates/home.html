@@ -157,6 +157,10 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('favoritos') }}"><i class="fas fa-heart"></i> Favoritos</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('feedback') }}"><i class="fas fa-comments"></i> Feedback</a>
+                        </li>
+                        
                     </ul>
                 </div>
                 {% if session['user_id'] %}

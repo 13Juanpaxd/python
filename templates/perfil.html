@@ -166,7 +166,6 @@
                             <i class="fas fa-user-circle"></i> Usuario
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                            <a class="dropdown-item" href="{{ url_for('perfil') }}">Perfil</a>
                             <a class="dropdown-item" href="{{ url_for('envios') }}">Envíos</a>
                             <a class="dropdown-item" href="{{ url_for('facturas') }}">Facturas</a>
                             <div class="dropdown-divider"></div>
@@ -180,9 +179,10 @@
     </header>
 
    
+
     <main class="container mt-4">
         <h2 class="text-center mb-4 text-primary">Editar Perfil</h2>
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between align-items-start">
             <div class="card mb-4" style="width: 60%;">
                 <div class="card-header bg-primary text-white">
                     <h5>Información Actual</h5>
@@ -196,21 +196,16 @@
                     <p><strong>Provincia:</strong> {{ cliente[5] }}</p>
                     <p><strong>Cantón:</strong> {{ cliente[6] }}</p>
                     <p><strong>Distrito:</strong> {{ cliente[7] }}</p>
-                    <p><strong></strong> 
-                        {% if cliente[8] %}
-                            <img src="{{ url_for('mostrar_foto', cliente_id=session['user_id']) }}" alt="Foto de Perfil" style="height: 100px; object-fit: cover;">
-                        {% else %}
-                            No se ha cargado una foto.
-                        {% endif %}
-                    </p>
                 </div>
             </div>
-            <div class="mb-4" style="width: 30%;">
-                {% if cliente[8] %}
-                    <img src="{{ url_for('mostrar_foto', cliente_id=session['user_id']) }}" class="rounded-circle" alt="Foto de Perfil" style="width: 150px; height: 150px; object-fit: cover;">
-                {% else %}
-                    <img src="/static/default_profile.png" class="rounded-circle" alt="Foto de Perfil" style="width: 150px; height: 150px; object-fit: cover;">
-                {% endif %}
+            <div class="mb-4" style="width: 30%; text-align: center; margin-top: 10px;">
+                <div style="width: 400px; height: 400px; overflow: hidden; margin: auto;  border-radius: 15px;">
+                    {% if cliente[8] %}
+                        <img src="{{ url_for('mostrar_foto', cliente_id=session['user_id']) }}" alt="Foto de Perfil" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
+                    {% else %}
+                        <img src="https://activosyvalores.com/assets/media/media_user/avar_user_default.png" alt="Foto de Perfil" style="width: 100%; height: 100%; object-fit: cover; border-radius: 15px;">
+                    {% endif %}
+                </div>
             </div>
         </div>
         <form action="/perfil" method="POST" enctype="multipart/form-data">
@@ -269,6 +264,9 @@
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         </form>
     </main>
+    
+        
+    
      
 
 
