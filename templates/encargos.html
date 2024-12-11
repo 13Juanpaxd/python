@@ -129,10 +129,11 @@
                             <img src="{{ url_for('user_photo', user_id=session['user_id']) }}" alt="Usuario" class="rounded-circle" width="30" height="30">
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                            <a class="dropdown-item" href="#">Perfil</a>
                             <a class="dropdown-item" href="{{ url_for('envios') }}">Envíos</a>
                             <a class="dropdown-item" href="{{ url_for('facturas') }}">Facturas</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                            <a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                         </div>
                     </li>
                 </ul>
@@ -141,7 +142,9 @@
         </nav>
         
     </header>
-    <!-- Main Content -->
+
+
+
     <main class="container mt-4">
         {% block content %}
         <div class="text-center">
@@ -149,22 +152,19 @@
         </div>
         <form method="post" class="mt-4">
             <div class="form-group">
-                <label for="producto">Producto ID</label>
-                <input type="number" class="form-control" id="producto" name="producto" required>
-            </div>
-            <div class="form-group">
-                <label for="cantidad">Plazo (días)</label>
-                <input type="number" class="form-control" id="cantidad" name="cantidad" required>
-            </div>
-            <div class="form-group">
-                <label for="descripcion">Descripción o Detalles</label>
-                <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                <label for="producto">Producto</label>
+                <select class="form-control" id="producto" name="producto" required>
+                    <option value="">Seleccione un producto</option>
+                    {% for producto in productos %}
+                    <option value="{{ producto[0] }}">{{ producto[1] }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary btn-lg">Realizar Encargo</button>
             </div>
         </form>
-
+    
         <hr class="my-4">
         <h3 class="text-center">Historial de Encargos</h3>
         <table class="table table-striped mt-4">
@@ -181,7 +181,7 @@
                     {% for encargo in encargos %}
                     <tr>
                         <td>{{ encargo[0] }}</td>
-                        <td>{{ encargo[1] }}</td>
+                        <td>{{ encargo[1] }} días</td>
                         <td>{{ encargo[2] }}</td>
                         <td>{{ encargo[3] }}</td>
                     </tr>
@@ -195,6 +195,10 @@
         </table>
         {% endblock %}
     </main>
+    
+
+
+
     <footer class="footer">
         <div class="container d-flex justify-content-between align-items-start py-4">
             <!-- Sección izquierda: Redes sociales y derechos reservados -->

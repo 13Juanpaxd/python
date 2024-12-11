@@ -18,7 +18,6 @@ app.config['MAIL_PASSWORD'] = 'Nicoleobregon12?'         # Cambia a tu contrase�
 app.config['MAIL_DEFAULT_SENDER'] = 'Nicoleobregon198@gmail.com'
 
 mail = Mail(app)
-#HOLIIIIIIIIIII
 def get_db_connection():
     connection = cx_Oracle.connect(
         user='ProyectoDefinitivo',
@@ -27,6 +26,9 @@ def get_db_connection():
         encoding='UTF-8'
     )
     return connection
+
+
+#############################################################################################################
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -57,9 +59,15 @@ def login():
                 flash('Correo o cédula incorrectos. Inténtelo de nuevo.')
 
     return render_template('login.html')
+
+
+#############################################################################################################
+
 @app.route('/home')
 def home():
     return render_template('home.html')
+
+#############################################################################################################
 
 @app.route('/index')
 def index():
@@ -67,6 +75,8 @@ def index():
         return redirect(url_for('login'))
     return render_template('index.html')
     
+
+#############################################################################################################
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -117,11 +127,15 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')
 
+#############################################################################################################
 
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
+
+
+#############################################################################################################
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -190,6 +204,8 @@ def profile():
     
     return render_template('profile.html', user_info=user_info)
 
+#############################################################################################################
+
 @app.route('/user_photo/<int:user_id>')
 def user_photo(user_id):
     conn = get_db_connection()
@@ -203,6 +219,174 @@ def user_photo(user_id):
         response.headers.set('Content-Type', 'image/jpeg')
         return response
     return 'No image found', 404
+
+
+#############################################################################################################
+
+@app.route('/mostrar_foto/<int:cliente_id>')
+def mostrar_foto(cliente_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT Foto FROM FIDE_CLIENTES_TB WHERE ID_Cliente = :cliente_id", {'cliente_id': cliente_id})
+    foto = cursor.fetchone()[0]
+
+    cursor.close()
+    conn.close()
+
+    if foto:
+        response = make_response(foto)
+        response.headers.set('Content-Type', 'image/jpeg')
+        return response
+    else:
+        return 'No hay foto de perfil disponible', 404
+
+
+
+#############################################################################################################
+
+@app.route('/perfil', methods=['GET', 'POST'])
+def perfil():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    user_id = session['user_id']
+
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        telefono = request.form['telefono']
+        correo = request.form['correo']
+        pais = request.form['pais']
+        provincia = request.form['provincia']
+        canton = request.form['canton']
+        distrito = request.form['distrito']
+        foto = request.files['foto']
+
+        # Leer la foto subida si existe
+        foto_blob = foto.read() if foto else None
+
+        # Actualizar la información del cliente
+        cursor.execute("""
+            UPDATE FIDE_CLIENTES_TB
+            SET Nombre = :nombre,
+                Telefono = :telefono,
+                Correo = :correo,
+                Pais = :pais,
+                Provincia = :provincia,
+                Canton = :canton,
+                Distrito = :distrito,
+                Foto = :foto_blob
+            WHERE ID_Cliente = :user_id
+        """, {
+            'nombre': nombre,
+            'telefono': telefono,
+            'correo': correo,
+            'pais': pais,
+            'provincia': provincia,
+            'canton': canton,
+            'distrito': distrito,
+            'foto_blob': foto_blob,
+            'user_id': user_id
+        })
+        conn.commit()
+        flash('Perfil actualizado con éxito.', 'success')
+
+    cursor.execute("SELECT ID_Pais, Nombre FROM FIDE_PAIS_TB")
+    paises = cursor.fetchall()
+    cursor.execute("SELECT ID_Provincia, Nombre FROM FIDE_PROVINCIA_TB")
+    provincias = cursor.fetchall()
+    cursor.execute("SELECT ID_Canton, Nombre FROM FIDE_CANTON_TB")
+    cantones = cursor.fetchall()
+    cursor.execute("SELECT ID_Distrito, Nombre FROM FIDE_DISTRITO_TB")
+    distritos = cursor.fetchall()
+    cursor.execute("""
+        SELECT Cedula, Nombre, Telefono, Correo, 
+            (SELECT Nombre FROM FIDE_PAIS_TB WHERE ID_Pais = c.Pais),
+            (SELECT Nombre FROM FIDE_PROVINCIA_TB WHERE ID_Provincia = c.Provincia),
+            (SELECT Nombre FROM FIDE_CANTON_TB WHERE ID_Canton = c.Canton),
+            (SELECT Nombre FROM FIDE_DISTRITO_TB WHERE ID_Distrito = c.Distrito),
+            Foto 
+        FROM FIDE_CLIENTES_TB c
+        WHERE ID_Cliente = :user_id
+    """, {'user_id': user_id})
+    cliente = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('perfil.html', paises=paises, provincias=provincias, cantones=cantones, distritos=distritos, cliente=cliente)
+
+
+#############################################################################################################
+
+
+@app.route('/actualizar_perfil', methods=['POST'])
+def actualizar_perfil():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    nombre = request.form['nombre']
+    telefono = request.form['telefono']
+    correo = request.form['correo']
+    pais = request.form['pais']
+    provincia = request.form['provincia']
+    canton = request.form['canton']
+    distrito = request.form['distrito']
+    foto = request.files['foto'].read() if 'foto' in request.files else None
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    if foto:
+        cursor.execute("""
+            UPDATE FIDE_CLIENTES_TB
+            SET Nombre = :nombre, Telefono = :telefono, Correo = :correo, 
+                Pais = :pais, Provincia = :provincia, Canton = :canton, 
+                Distrito = :distrito, Foto = :foto
+            WHERE ID_Cliente = :user_id
+        """, {
+            'nombre': nombre,
+            'telefono': telefono,
+            'correo': correo,
+            'pais': pais,
+            'provincia': provincia,
+            'canton': canton,
+            'distrito': distrito,
+            'foto': foto,
+            'user_id': user_id
+        })
+    else:
+        cursor.execute("""
+            UPDATE FIDE_CLIENTES_TB
+            SET Nombre = :nombre, Telefono = :telefono, Correo = :correo, 
+                Pais = :pais, Provincia = :provincia, Canton = :canton, 
+                Distrito = :distrito
+            WHERE ID_Cliente = :user_id
+        """, {
+            'nombre': nombre,
+            'telefono': telefono,
+            'correo': correo,
+            'pais': pais,
+            'provincia': provincia,
+            'canton': canton,
+            'distrito': distrito,
+            'user_id': user_id
+        })
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Perfil actualizado con éxito.', 'success')
+    return redirect(url_for('perfil'))
+
+
+
+#############################################################################################################
 
 @app.route('/inventario', methods=['GET', 'POST'])
 def inventario():
@@ -251,6 +435,9 @@ def inventario():
         cursor.close()
         conn.close()
  
+
+#############################################################################################################
+
 @app.route('/imagen/<int:producto_id>')
 def imagen(producto_id):
     conn = get_db_connection()
@@ -271,6 +458,9 @@ def imagen(producto_id):
     finally:
         cursor.close()
         conn.close()
+
+
+#############################################################################################################
 
 @app.route('/clientes', methods=['GET', 'POST'])
 def clientes():
@@ -312,6 +502,9 @@ def clientes():
     conn.close()
     return render_template('clientes.html', rows=rows)
 
+
+#############################################################################################################
+
 @app.route('/proveedores', methods=['GET', 'POST'])
 def proveedores():
     if 'user_id' not in session:
@@ -342,6 +535,8 @@ def proveedores():
     return render_template('proveedores.html', proveedores=proveedores)
 
 
+#############################################################################################################
+
 @app.route('/envios')
 def envios():
     """
@@ -352,6 +547,9 @@ def envios():
     
     return render_template('envios.html')  
 
+
+#############################################################################################################
+
 @app.route('/facturas')
 def facturas():
     """
@@ -361,6 +559,9 @@ def facturas():
         return redirect(url_for('login'))
 
     return render_template('facturas.html') 
+
+
+#############################################################################################################
 
 @app.route('/encargos', methods=['GET', 'POST'])
 def encargos():
@@ -376,8 +577,8 @@ def encargos():
         if request.method == 'POST':
             producto_id = request.form['producto']
             cliente_id = session['user_id']
-            plazo = request.form['cantidad']
-            
+            plazo = 15  # Plazo fijo de 15 días
+
             cursor.execute("""
                 INSERT INTO FIDE_ENCARGOS_TB 
                 (Producto_ID, Cliente_ID, Plazo, Fecha_Inicial, Fecha_Limite) 
@@ -390,36 +591,43 @@ def encargos():
             conn.commit()
             flash('Encargo realizado con éxito.', 'success')
 
+        # Obtener el listado de productos para el formulario
+        cursor.execute("SELECT ID_Producto, Nombre FROM FIDE_INVENTARIO_TB")
+        productos = cursor.fetchall()
+
         cursor.execute("""
-            SELECT Producto_ID, Plazo, TO_CHAR(Fecha_Inicial, 'YYYY-MM-DD'), TO_CHAR(Fecha_Limite, 'YYYY-MM-DD') 
-            FROM FIDE_ENCARGOS_TB 
-            WHERE Cliente_ID = :cliente_id
+            SELECT i.Nombre, e.Plazo, TO_CHAR(e.Fecha_Inicial, 'YYYY-MM-DD'), TO_CHAR(e.Fecha_Limite, 'YYYY-MM-DD') 
+            FROM FIDE_ENCARGOS_TB e
+            JOIN FIDE_INVENTARIO_TB i ON e.Producto_ID = i.ID_Producto
+            WHERE e.Cliente_ID = :cliente_id
         """, {'cliente_id': session['user_id']})
         encargos = cursor.fetchall()
 
-        return render_template('encargos.html', encargos=encargos)
+        return render_template('encargos.html', productos=productos, encargos=encargos)
 
     except Exception as e:
         print(f"Error: {e}")
         flash('Ocurrió un error al procesar la solicitud.', 'error')
-        return render_template('encargos.html', encargos=[])
+        return render_template('encargos.html', productos=[], encargos=[])
     finally:
         if cursor:
             cursor.close()
         if conn:
             conn.close()
+
     
+
+#############################################################################################################
 
 @app.route('/carrito', methods=['GET', 'POST'])
 def carrito():
     if 'user_id' not in session:
-        return redirect(url_for('login'))  
-    conn = None
-    cursor = None
+        return redirect(url_for('login'))
+    
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-
+        
         if request.method == 'POST':
             producto_id = request.form['producto_id']
             cantidad = request.form['cantidad']
@@ -427,7 +635,7 @@ def carrito():
 
             cursor.execute("""
                 INSERT INTO FIDE_CARRITO_TB 
-                (ID_Cliente, ID_Producto, Cantidad) 
+                (Cliente_ID, Producto_ID, Cantidad) 
                 VALUES (:user_id, :producto_id, :cantidad)
             """, {
                 'user_id': user_id,
@@ -438,14 +646,16 @@ def carrito():
             flash('Producto añadido al carrito.', 'success')
 
         cursor.execute("""
-            SELECT c.ID_Producto, i.Nombre, c.Cantidad, i.Precio, (c.Cantidad * i.Precio) AS Total
+            SELECT c.Producto_ID, i.Nombre, c.Cantidad, i.Precio, (c.Cantidad * i.Precio) AS Subtotal
             FROM FIDE_CARRITO_TB c
-            JOIN FIDE_INVENTARIO_TB i ON c.ID_Producto = i.ID_Producto
-            WHERE c.ID_Cliente = :user_id
+            JOIN FIDE_INVENTARIO_TB i ON c.Producto_ID = i.ID_Producto
+            WHERE c.Cliente_ID = :user_id
         """, {'user_id': session['user_id']})
         carrito = cursor.fetchall()
+        print("Productos en el carrito:", carrito)  # Línea de depuración
 
         total = sum(item[4] for item in carrito)
+        print("Total calculado:", total)  # Línea de depuración
 
         return render_template('carrito.html', carrito=carrito, total=total)
 
@@ -459,13 +669,16 @@ def carrito():
         if conn:
             conn.close()
 
+
+#############################################################################################################
+
 @app.route('/catalogo', methods=['GET'])
 def catalogo():
     """
     Muestra el catálogo de productos desde la base de datos.
     """
     if 'user_id' not in session:
-        return redirect(url_for('login'))  
+        return redirect(url_for('login'))
     conn = None
     cursor = None
     try:
@@ -474,11 +687,12 @@ def catalogo():
 
         cursor.execute('SELECT ID_Producto, Nombre, Imagen, Precio, Detalle, Cantidad FROM FIDE_INVENTARIO_TB')
         productos = cursor.fetchall()
+        print("Productos obtenidos del catálogo:", productos)  # Línea de depuración
 
         return render_template('catalogo.html', productos=productos)
 
     except Exception as e:
-        print(f"Error al cargar el catálogo: f{e}")
+        print(f"Error al cargar el catálogo: {e}")
         flash('Error al cargar el catálogo.', 'error')
         return render_template('catalogo.html', productos=[])
     finally:
@@ -486,56 +700,12 @@ def catalogo():
             cursor.close()
         if conn:
             conn.close()
-            
-@app.route('/add_to_favorites', methods=['POST'])
-def add_to_favorites():
-    producto_id = request.form.get('producto_id')
-    # Lógica para añadir a favoritos
-    flash('Producto añadido a favoritos.')
-    return redirect(url_for('favoritos'))  # Redirige al catálogo
 
-@app.route('/add_to_cart', methods=['POST'])
-def add_to_cart():
-    producto_id = request.form.get('producto_id')
-    # Lógica para añadir al carrito
-    flash('Producto añadido al carrito.')
-    return redirect(url_for('carrito'))  # Redirige al catálogo
 
-@app.route('/add_to_favoritos', methods=['POST'])
-def add_to_favoritos():
-    if 'user_id' not in session:
-        return jsonify({'error': 'Debe iniciar sesión para agregar a favoritos'}), 403
-    
-    try:
-        producto_id = request.form.get('producto_id')
-        user_id = session['user_id']
-        
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute("""
-            SELECT 1 FROM FIDE_FAVORITOS_TB 
-            WHERE ID_Cliente = :user_id AND ID_Producto = :producto_id
-        """, {'user_id': user_id, 'producto_id': producto_id})
-        
-        if cursor.fetchone():
-            return jsonify({'error': 'El producto ya está en favoritos'}), 400
-        
-        cursor.execute("""
-            INSERT INTO FIDE_FAVORITOS_TB (ID_Cliente, ID_Producto) 
-            VALUES (:user_id, :producto_id)
-        """, {'user_id': user_id, 'producto_id': producto_id})
-        
-        conn.commit()
-        return jsonify({'success': 'Producto agregado a favoritos'})
-    
-    except Exception as e:
-        print(f"Error al agregar a favoritos: {e}")
-        return jsonify({'error': 'Error interno'}), 500
-    
-    finally:
-        cursor.close()
-        conn.close()
+#############################################################################################################
+
+
+#############################################################################################################
 
 @app.route('/submit_feedback', methods=['POST'])
 def submit_feedback():
@@ -567,6 +737,7 @@ def submit_feedback():
     
     return redirect(url_for('catalogo'))
 
+#############################################################################################################
 
 @app.route('/feedback/<int:producto_id>')
 def feedback(producto_id):
@@ -584,6 +755,7 @@ def feedback(producto_id):
     conn.close()
     return render_template('feedback.html', feedbacks=feedbacks, producto_id=producto_id)
 
+#############################################################################################################
 @app.route('/favoritos', methods=['GET'])
 def favoritos():
     if 'user_id' not in session:
@@ -593,10 +765,9 @@ def favoritos():
     cursor = conn.cursor()
 
     try:
-        
         user_id = session['user_id']
         cursor.execute("""
-            SELECT f.Producto_ID, i.Nombre, i.Precio, i.Detalle
+            SELECT f.Producto_ID, i.Nombre, i.Precio, i.Detalle, i.Imagen
             FROM FIDE_FAVORITO_TB f
             JOIN FIDE_INVENTARIO_TB i ON f.Producto_ID = i.ID_Producto
             WHERE f.Cliente_ID = :user_id
@@ -608,6 +779,8 @@ def favoritos():
 
     return render_template('favoritos.html', favoritos=favoritos)
 
+
+#############################################################################################################
 @app.route('/agregar_favorito/<int:producto_id>', methods=['POST'])
 def agregar_favorito(producto_id):
     if 'user_id' not in session:
@@ -619,17 +792,17 @@ def agregar_favorito(producto_id):
     try:
         user_id = session['user_id']
 
+        # Verificar si el producto ya está en favoritos
         cursor.execute("""
             SELECT COUNT(*) 
-            FROM FIDE_FAVORITOS_TB 
-            WHERE ID_Cliente = :user_id AND ID_Producto = :producto_id
+            FROM FIDE_FAVORITO_TB 
+            WHERE Cliente_ID = :user_id AND Producto_ID = :producto_id
         """, {'user_id': user_id, 'producto_id': producto_id})
         count = cursor.fetchone()[0]
 
         if count == 0:
-            
             cursor.execute("""
-                INSERT INTO FIDE_FAVORITOS_TB (ID_Cliente, ID_Producto)
+                INSERT INTO FIDE_FAVORITO_TB (Cliente_ID, Producto_ID)
                 VALUES (:user_id, :producto_id)
             """, {'user_id': user_id, 'producto_id': producto_id})
             conn.commit()
@@ -642,6 +815,34 @@ def agregar_favorito(producto_id):
 
     return redirect(url_for('catalogo'))
 
+
+#############################################################################################################
+
+@app.route('/eliminar_favorito/<int:producto_id>', methods=['POST'])
+def eliminar_favorito(producto_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        user_id = session['user_id']
+
+        cursor.execute("""
+            DELETE FROM FIDE_FAVORITO_TB 
+            WHERE Cliente_ID = :user_id AND Producto_ID = :producto_id
+        """, {'user_id': user_id, 'producto_id': producto_id})
+        conn.commit()
+        flash('Producto eliminado de favoritos.', 'success')
+    finally:
+        cursor.close()
+        conn.close()
+
+    return redirect(url_for('favoritos'))
+
+
+#############################################################################################################
 @app.route('/proveedores', methods=['GET', 'POST'])
 def proveedores_view():
     if request.method == 'POST':
@@ -660,10 +861,8 @@ def proveedores_view():
     return render_template('proveedores.html', proveedores=proveedores)
 
 
-@app.route('/carrito')
-def carrito_page():
-    total = sum(item['precio'] * item['cantidad'] for item in carrito)
-    return render_template('carrito.html', carrito=carrito, total=total)
+
+#############################################################################################################
 
 @app.route('/facturar', methods=['POST'])
 def facturar():
@@ -682,16 +881,117 @@ def facturar():
         })
 
     return render_template('factura.html', factura=factura, total=total)
+#############################################################################################################
 
-
-@app.route('/agregar_al_carrito/<int:producto_id>')
+@app.route('/agregar_al_carrito/<int:producto_id>', methods=['POST'])
 def agregar_al_carrito(producto_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
     
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        user_id = session['user_id']
+        cantidad = int(request.form.get('cantidad', 1))
+        estado_id = 1
+
+        # Obtener el precio del producto para calcular el subtotal
+        cursor.execute("SELECT Precio FROM FIDE_INVENTARIO_TB WHERE ID_Producto = :producto_id", {'producto_id': producto_id})
+        precio = cursor.fetchone()[0]
+        subtotal = precio * cantidad
+
+        cursor.execute("""
+            INSERT INTO FIDE_CARRITO_TB 
+            (Producto_ID, Cantidad, Subtotal, Cliente_ID) 
+            VALUES (:producto_id, :cantidad, :subtotal, :user_id)
+        """, {
+            'producto_id': producto_id,
+            'cantidad': cantidad,
+            'subtotal': subtotal,
+            'user_id': user_id
+        })
+        conn.commit()
+        flash('Producto añadido al carrito.', 'success')
+
+    except Exception as e:
+        print(f"Error al agregar producto al carrito: {e}")
+        flash('Ocurrió un error al agregar el producto al carrito.', 'error')
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
     return redirect(url_for('catalogo'))
 
-@app.route('/agregar_a_favoritos/<int:producto_id>')
-def agregar_a_favoritos(producto_id):
 
-    return redirect(url_for('catalogo'))
+#############################################################################################################
+
+@app.route('/vaciar_carrito', methods=['POST'])
+def vaciar_carrito():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        user_id = session['user_id']
+
+        # Eliminar todos los productos del carrito del usuario actual
+        cursor.execute("""
+            DELETE FROM FIDE_CARRITO_TB WHERE Cliente_ID = :user_id
+        """, {'user_id': user_id})
+        conn.commit()
+        flash('Carrito vaciado con éxito.', 'success')
+
+    except Exception as e:
+        print(f"Error al vaciar el carrito: {e}")
+        flash('Ocurrió un error al vaciar el carrito.', 'error')
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+    return redirect(url_for('carrito'))
+
+
+#############################################################################################################
+@app.route('/eliminar_del_carrito/<int:producto_id>', methods=['POST'])
+def eliminar_del_carrito(producto_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        user_id = session['user_id']
+
+        # Eliminar el producto específico del carrito del usuario actual
+        cursor.execute("""
+            DELETE FROM FIDE_CARRITO_TB WHERE Cliente_ID = :user_id AND Producto_ID = :producto_id
+        """, {'user_id': user_id, 'producto_id': producto_id})
+        conn.commit()
+        flash('Producto eliminado del carrito.', 'success')
+
+    except Exception as e:
+        print(f"Error al eliminar producto del carrito: {e}")
+        flash('Ocurrió un error al eliminar el producto del carrito.', 'error')
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+    return redirect(url_for('carrito'))
+
+#############################################################################################################
+
 if __name__ == '__main__':
     app.run(debug=True)

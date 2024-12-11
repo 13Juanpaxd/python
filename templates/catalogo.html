@@ -140,11 +140,6 @@
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('catalogo') }}">
-                                <i class="fas fa-th-large"></i> Catalogo
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('carrito') }}">
                                 <i class="fas fa-shopping-cart"></i> Carrito
                             </a>
@@ -169,6 +164,7 @@
                             <img src="{{ url_for('user_photo', user_id=session['user_id']) }}" alt="Usuario" class="rounded-circle" width="30" height="30">
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                            <a class="dropdown-item" href="#">Perfil</a>
                             <a class="dropdown-item" href="{{ url_for('envios') }}">Envíos</a>
                             <a class="dropdown-item" href="{{ url_for('facturas') }}">Facturas</a>
                             <div class="dropdown-divider"></div>
@@ -182,7 +178,6 @@
     </header>
     
     <main class="container mt-4">
-        {% block content %}
         <div class="container">
             <h2 class="text-center my-4">Catálogo de Productos</h2>
             <div class="row">
@@ -194,17 +189,17 @@
                                 <h5 class="card-title">{{ producto[1] }}</h5>
                                 <p class="card-text">{{ producto[4] }}</p>
                                 <p class="card-text"><strong>Precio:</strong> ₡{{ producto[3] }}</p>
-                                
                             </div>
                             <div class="card-footer d-flex justify-content-between">
                                 <!-- Botón de favorito -->
-                                <form action="{{ url_for('add_to_favorites', producto_id=producto[0]) }}" method="post">
+                                <form action="{{ url_for('agregar_favorito', producto_id=producto[0]) }}" method="post">
                                     <button type="submit" class="btn btn-light">
                                         <i class="fas fa-heart"></i> Favorito
                                     </button>
                                 </form>
                                 <!-- Botón de carrito -->
-                                <form action="{{ url_for('add_to_cart', producto_id=producto[0]) }}" method="post">
+                                <form action="{{ url_for('agregar_al_carrito', producto_id=producto[0]) }}" method="post">
+                                    <input type="hidden" name="cantidad" value="1">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-shopping-cart"></i> Carrito
                                     </button>
@@ -215,8 +210,9 @@
                 {% endfor %}
             </div>
         </div>
-        {% endblock %}
     </main>
+    
+    
     
     <footer class="footer">
         <div class="container d-flex justify-content-between align-items-start py-4">

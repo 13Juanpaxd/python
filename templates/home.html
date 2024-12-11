@@ -166,6 +166,10 @@
                             <i class="fas fa-user-circle"></i> Usuario
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                            <a class="dropdown-item" href="{{ url_for('perfil') }}">Perfil</a>
+                            <a class="dropdown-item" href="{{ url_for('envios') }}">Envíos</a>
+                            <a class="dropdown-item" href="{{ url_for('facturas') }}">Facturas</a>
+                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                         </div>
                     </li>
