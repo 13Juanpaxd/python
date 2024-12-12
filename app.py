@@ -13,8 +13,8 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'nicoleobregon198@gmail.com'  # Cambia a tu correo
-app.config['MAIL_PASSWORD'] = 'Nicoleobregon12?'         # Cambia a tu contraseña
+app.config['MAIL_USERNAME'] = 'nicoleobregon198@gmail.com'  
+app.config['MAIL_PASSWORD'] = 'znqn corv woaf bcew'         
 app.config['MAIL_DEFAULT_SENDER'] = 'Nicoleobregon198@gmail.com'
 
 mail = Mail(app)
@@ -280,10 +280,10 @@ def perfil():
         distrito = request.form['distrito']
         foto = request.files['foto']
 
-        # Leer la foto subida si existe
+     
         foto_blob = foto.read() if foto else None
 
-        # Actualizar la información del cliente
+    
         cursor.execute("""
             UPDATE FIDE_CLIENTES_TB
             SET Nombre = :nombre,
@@ -307,7 +307,29 @@ def perfil():
             'user_id': user_id
         })
         conn.commit()
-        flash('Perfil actualizado con éxito.', 'success')
+
+ 
+        try:
+            msg = Message(
+                'Actualización de Perfil',
+                sender='nicoleobregon198@gmail.com',  
+                recipients=[correo]
+            )
+            msg.body = f"""
+            Hola {nombre},
+
+            Tu perfil ha sido actualizado con éxito.
+
+            Si no realizaste esta acción, por favor contáctanos de inmediato.
+
+            Saludos,
+            El equipo de Frikiland
+            """
+            mail.send(msg)
+            flash('Perfil actualizado con éxito. Se ha enviado un correo de notificación.', 'success')
+        except Exception as e:
+            flash(f'Error al enviar el correo: {str(e)}', 'danger')
+
 
     cursor.execute("SELECT ID_Pais, Nombre FROM FIDE_PAIS_TB")
     paises = cursor.fetchall()
@@ -333,8 +355,6 @@ def perfil():
     conn.close()
 
     return render_template('perfil.html', paises=paises, provincias=provincias, cantones=cantones, distritos=distritos, cliente=cliente)
-
-
 #############################################################################################################
 
 

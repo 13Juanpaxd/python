@@ -16,6 +16,7 @@
             </div>
         {% endif %}
     {% endwith %}
+
     <form method="post" action="{{ url_for('register') }}" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nombre">Nombre</label>
@@ -54,7 +55,7 @@
             <label for="foto">Foto</label>
             <input type="file" class="form-control" id="foto" name="foto" required>
         </div>
-        <button type="submit" class="btn btn-primary">Registrar</button>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </form>
 </div>
 {% endblock %}
