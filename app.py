@@ -18,11 +18,12 @@ app.config['MAIL_PASSWORD'] = 'Nicoleobregon12?'         # Cambia a tu contrase√
 app.config['MAIL_DEFAULT_SENDER'] = 'Nicoleobregon198@gmail.com'
 
 mail = Mail(app)
+
 def get_db_connection():
     connection = cx_Oracle.connect(
         user='ProyectoDefinitivo',
         password='ProyectoDefinitivo',
-        dsn='localhost:1521/xe',
+        dsn='localhost:1521/orcl',
         encoding='UTF-8'
     )
     return connection
