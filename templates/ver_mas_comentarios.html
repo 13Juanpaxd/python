@@ -157,6 +157,10 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('favoritos') }}"><i class="fas fa-heart"></i> Favoritos</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('feedback') }}"><i class="fas fa-comments"></i> Feedback</a>
+                        </li>
+                        
                     </ul>
                 </div>
                 {% if session['user_id'] %}
@@ -183,87 +187,68 @@
 
 
     <main class="container mt-4">
-        <h2 class="text-center mb-4 text-primary">Feedback de Productos</h2>
-        <div class="row">
-            {% for producto in productos %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <img src="{{ url_for('imagen', producto_id=producto[0]) }}" class="card-img-top" alt="{{ producto[1] }}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ producto[1] }}</h5>
-                        <form action="{{ url_for('comentar', producto_id=producto[0]) }}" method="post">
-                            <div class="form-group">
-                                <textarea name="comentario" class="form-control" rows="2" placeholder="Escribe tu comentario"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary"><i class="fas fa-comment-dots"></i> Comentar</button>
-                        </form>
-                        <hr>
-                        <h6>Comentarios:</h6>
-                        {% for comentario in comentarios[producto[0]] %}
-                        <p><strong>{{ comentario['nombre'] }}:</strong> {{ comentario['comentario'] }}</p>
-                        {% endfor %}
-                        {% if comentarios[producto[0]]|length == 0 %}
-                        <p class="text-muted">No hay comentarios aún.</p>
-                        {% endif %}
-                        {% if comentarios[producto[0]]|length >= 3 %}
-                        <a href="{{ url_for('ver_mas_comentarios', producto_id=producto[0]) }}" class="btn btn-link">Ver más comentarios <i class="fas fa-arrow-right"></i></a>
-                        {% endif %}
-                    </div>
-                </div>
+        <h2 class="text-center mb-4 text-primary">Comentarios de {{ producto[0] }}</h2>
+        <div class="card mb-4">
+            <img src="{{ url_for('imagen', producto_id=producto_id) }}" class="card-img-top" alt="{{ producto[0] }}" style="height: 150px; width: 150px; object-fit: cover; margin: auto; border-radius: 8px;">
+            <div class="card-body">
+                <h5 class="card-title">{{ producto[0] }}</h5>
+                <hr>
+                <h6>Comentarios:</h6>
+                {% for comentario in comentarios %}
+                <p><strong>{{ comentario['nombre'] }}:</strong> {{ comentario['comentario'] }}</p>
+                {% endfor %}
+                {% if comentarios|length == 0 %}
+                <p class="text-muted">No hay comentarios aún.</p>
+                {% endif %}
             </div>
-            {% endfor %}
         </div>
     </main>
     
-    
-    
 
 
 
-
-
-
-    <footer class="footer">
-        <div class="container d-flex justify-content-between align-items-start py-4">
-            <!-- Sección izquierda: Redes sociales y derechos reservados -->
-            <div class="left-section text-left">
-                <p class="mb-2">¡Síguenos en nuestras redes sociales!</p>
-                <ul class="list-inline mb-2">
-                    <li class="list-inline-item">
-                        <a href="https://www.facebook.com/profile.php?id=61565799606598" target="_blank" class="text-white">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="https://www.instagram.com/frikilandplus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="text-white">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </li>
-                </ul>
-                <p>&copy; 2024 Tu Tienda. Todos los derechos reservados.</p>
-            </div>
-   
-            <!-- Sección derecha: Atención al Cliente -->
-            <div class="right-section text-left">
-                <h5 class="mb-2">Atención al Cliente</h5>
-                <p class="mb-2">¿Necesitas ayuda? Contáctanos por:</p>
-                <ul class="list-inline mb-0">
-                    <li class="list-inline-item">
-                        <a href="https://wa.me/1234567890" target="_blank" class="text-white">
-                            <i class="fab fa-whatsapp"></i> WhatsApp
-                        </a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="mailto:soporte@tutienda.com" class="text-white">
-                            <i class="fas fa-envelope"></i> Correo Electrónico
-                        </a>
-                    </li>
-                </ul>
-            </div>
+<footer class="footer">
+    <div class="container d-flex justify-content-between align-items-start py-4">
+        <!-- Sección izquierda: Redes sociales y derechos reservados -->
+        <div class="left-section text-left">
+            <p class="mb-2">¡Síguenos en nuestras redes sociales!</p>
+            <ul class="list-inline mb-2">
+                <li class="list-inline-item">
+                    <a href="https://www.facebook.com/profile.php?id=61565799606598" target="_blank" class="text-white">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="https://www.instagram.com/frikilandplus?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="text-white">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </li>
+            </ul>
+            <p>&copy; 2024 Tu Tienda. Todos los derechos reservados.</p>
         </div>
-    </footer>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+        <!-- Sección derecha: Atención al Cliente -->
+        <div class="right-section text-left">
+            <h5 class="mb-2">Atención al Cliente</h5>
+            <p class="mb-2">¿Necesitas ayuda? Contáctanos por:</p>
+            <ul class="list-inline mb-0">
+                <li class="list-inline-item">
+                    <a href="https://wa.me/1234567890" target="_blank" class="text-white">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                </li>
+                <li class="list-inline-item">
+                    <a href="mailto:soporte@tutienda.com" class="text-white">
+                        <i class="fas fa-envelope"></i> Correo Electrónico
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+

@@ -91,6 +91,9 @@
                                 <i class="fas fa-heart"></i> Favoritos
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('feedback') }}"><i class="fas fa-comments"></i> Feedback</a>
+                        </li>
                     </ul>
                 </div>
                 {% if session['user_id'] %}
@@ -154,23 +157,30 @@
         <div class="text-right mt-3">
             <h4>Total General: ₡{{ total }}</h4>
         </div>
-        <div class="text-center mt-4">
-            <form method="POST" action="{{ url_for('facturar') }}">
-                <button type="submit" class="btn btn-primary btn-lg">
-                    <i class="fas fa-receipt"></i> Facturar
-                </button>
-            </form>
+        <div class="d-flex justify-content-between mt-4">
             <form method="POST" action="{{ url_for('vaciar_carrito') }}" class="d-inline">
                 <button type="submit" class="btn btn-danger btn-lg">
                     <i class="fas fa-trash-alt"></i> Vaciar Carrito
+                </button>
+            </form>
+            <form method="POST" action="{{ url_for('previsualizar_factura') }}">
+                {% for producto in carrito %}
+                <input type="hidden" name="productos[]" value="{{ producto[1] }}">
+                <input type="hidden" name="precios[]" value="{{ producto[3] }}">
+                <input type="hidden" name="cantidades[]" value="{{ producto[2] }}">
+                {% endfor %}
+                <input type="hidden" name="total" value="{{ total }}">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fas fa-receipt"></i> Facturar
                 </button>
             </form>
         </div>
         {% endif %}
     </main>
     
-    
 
+    
+    
     
     
     <footer class="footer">

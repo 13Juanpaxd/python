@@ -546,8 +546,24 @@ def envios():
     """
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
-    return render_template('envios.html')  
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT e.ID_Envios, e.Factura_ID, em.EMPRESA,  e.Estado 
+        FROM FIDE_ENVIOS_TB e
+        JOIN FIDE_FACTURA_TB f ON e.Factura_ID = f.ID_Factura
+        JOIN FIDE_CLIENTES_TB c ON f.Cliente_ID = c.ID_Cliente
+        JOIN FIDE_EMPRESA_ENVIOS_TB em ON e.Empresa_ID = em.ID_MENSAJERO
+    """)
+    envios = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('envios.html', envios=envios)
+
 
 
 #############################################################################################################
@@ -560,7 +576,25 @@ def facturas():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    return render_template('facturas.html') 
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    user_id = session['user_id']
+
+    cursor.execute("""
+        SELECT f.ID_Factura, m.Descripcion, f.Detalle, f.Total 
+        FROM FIDE_FACTURA_TB f
+        JOIN FIDE_METODO_PAGO_TB m ON f.Metodo_ID = m.ID_Metodo
+        WHERE f.Cliente_ID = :user_id
+    """, {'user_id': user_id})
+    facturas = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('facturas.html', facturas=facturas)
+
+
 
 
 #############################################################################################################
@@ -705,17 +739,6 @@ def catalogo():
 
 
 #############################################################################################################
-
-
-#############################################################################################################
-
-
-
-#############################################################################################################
-
-
-
-#############################################################################################################
 @app.route('/favoritos', methods=['GET'])
 def favoritos():
     if 'user_id' not in session:
@@ -824,23 +847,7 @@ def proveedores_view():
 
 #############################################################################################################
 
-@app.route('/facturar', methods=['POST'])
-def facturar():
-    productos = request.form.getlist('productos[]')
-    precios = request.form.getlist('precios[]')
-    cantidades = request.form.getlist('cantidades[]')
-    total = request.form.get('total')
 
-    factura = []
-    for i in range(len(productos)):
-        factura.append({
-            'producto': productos[i],
-            'precio': precios[i],
-            'cantidad': cantidades[i],
-            'subtotal': int(precios[i]) * int(cantidades[i])
-        })
-
-    return render_template('factura.html', factura=factura, total=total)
 #############################################################################################################
 
 @app.route('/agregar_al_carrito/<int:producto_id>', methods=['POST'])
@@ -969,13 +976,14 @@ def feedback():
     comentarios = {}
     for producto in productos:
         cursor.execute("""
-            SELECT Comentario 
-            FROM FIDE_FEEDBACK_TB 
-            WHERE Producto_ID = :producto_id 
-            ORDER BY ID_Feedback DESC 
+            SELECT f.Comentario, c.Nombre 
+            FROM FIDE_FEEDBACK_TB f
+            JOIN FIDE_CLIENTES_TB c ON f.Cliente_ID = c.ID_Cliente
+            WHERE f.Producto_ID = :producto_id 
+            ORDER BY f.ID_Feedback DESC 
             FETCH FIRST 3 ROWS ONLY
         """, {'producto_id': producto[0]})
-        comentarios[producto[0]] = [row[0] for row in cursor.fetchall()]
+        comentarios[producto[0]] = [{'comentario': row[0], 'nombre': row[1]} for row in cursor.fetchall()]
 
     cursor.close()
     conn.close()
@@ -1006,6 +1014,164 @@ def comentar(producto_id):
 
     flash('Comentario añadido con éxito.', 'success')
     return redirect(url_for('feedback'))
+
+#############################################################################################################
+
+@app.route('/ver_mas_comentarios/<int:producto_id>', methods=['GET'])
+def ver_mas_comentarios(producto_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Obtener todos los comentarios para el producto
+    cursor.execute("""
+        SELECT f.Comentario, c.Nombre 
+        FROM FIDE_FEEDBACK_TB f
+        JOIN FIDE_CLIENTES_TB c ON f.Cliente_ID = c.ID_Cliente
+        WHERE f.Producto_ID = :producto_id 
+        ORDER BY f.ID_Feedback DESC
+    """, {'producto_id': producto_id})
+    comentarios = [{'comentario': row[0], 'nombre': row[1]} for row in cursor.fetchall()]
+
+    # Obtener información del producto
+    cursor.execute("SELECT Nombre, Imagen FROM FIDE_INVENTARIO_TB WHERE ID_Producto = :producto_id", {'producto_id': producto_id})
+    producto = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return render_template('ver_mas_comentarios.html', producto=producto, producto_id=producto_id, comentarios=comentarios)
+
+
+
+#############################################################################################################
+
+@app.route('/previsualizar_factura', methods=['POST'])
+def previsualizar_factura():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    productos = request.form.getlist('productos[]')
+    precios = request.form.getlist('precios[]')
+    cantidades = request.form.getlist('cantidades[]')
+    total = request.form.get('total')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Obtener métodos de pago
+    cursor.execute("SELECT ID_Metodo, Descripcion FROM FIDE_METODO_PAGO_TB")
+    metodos_pago = cursor.fetchall()
+
+    # Preparar detalles de la factura
+    detalle = []
+    subtotal = 0
+    for i in range(len(productos)):
+        subtotal += int(precios[i]) * int(cantidades[i])
+        detalle.append({
+            'producto': productos[i],
+            'precio': precios[i],
+            'cantidad': cantidades[i],
+            'subtotal': int(precios[i]) * int(cantidades[i])
+        })
+
+    iva = subtotal * 0.13
+    costo_envio = 1500
+    total = subtotal + iva + costo_envio
+
+    cursor.close()
+    conn.close()
+
+    return render_template('previsualizar_factura.html', detalle=detalle, subtotal=subtotal, iva=iva, costo_envio=costo_envio, total=total, metodos_pago=metodos_pago)
+
+#############################################################################################################
+
+@app.route('/confirmar_factura', methods=['POST'])
+def confirmar_factura():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    metodo_pago = request.form['metodo_pago']
+    productos = request.form.getlist('productos[]')
+    precios = request.form.getlist('precios[]')
+    cantidades = request.form.getlist('cantidades[]')
+    subtotal = request.form['subtotal']
+    iva = request.form['iva']
+    costo_envio = request.form['costo_envio']
+    total = request.form['total']
+
+    user_id = session['user_id']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    detalle = ', '.join(productos)
+
+    cursor.execute("""
+        INSERT INTO FIDE_FACTURA_TB (Cliente_ID, Metodo_ID, Detalle, TotalDeLineas, Total, Subtotal, IVA, Costo_Envio)
+        VALUES (:cliente_id, :metodo_id, :detalle, :total_lineas, :total, :subtotal, :iva, :costo_envio)
+    """, {
+        'cliente_id': user_id,
+        'metodo_id': metodo_pago,
+        'detalle': detalle,
+        'total_lineas': len(productos),
+        'total': total,
+        'subtotal': subtotal,
+        'iva': iva,
+        'costo_envio': costo_envio
+    })
+    conn.commit()
+
+    # Vaciar el carrito del usuario
+    cursor.execute("""
+        DELETE FROM FIDE_CARRITO_TB WHERE Cliente_ID = :user_id
+    """, {'user_id': user_id})
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    flash('Factura confirmada y guardada con éxito. El carrito ha sido vaciado.', 'success')
+    return redirect(url_for('facturas'))
+
+#############################################################################################################
+
+
+@app.route('/enviar_factura/<int:factura_id>', methods=['POST'])
+def enviar_factura(factura_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    empresa_id = 1  # ID de la empresa de envíos
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Insertar envío
+        cursor.execute("""
+            INSERT INTO FIDE_ENVIOS_TB (Cliente_ID, Factura_ID, Empresa_ID)
+            VALUES (:cliente_id, :factura_id, :empresa_id)
+        """, {
+            'cliente_id': user_id,
+            'factura_id': factura_id,
+            'empresa_id': empresa_id
+        })
+        conn.commit()
+        flash('Factura enviada con éxito.', 'success')
+    except Exception as e:
+        print(f"Error al enviar la factura: {e}")
+        flash('Ocurrió un error al enviar la factura.', 'error')
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+    return redirect(url_for('facturas'))
 
 
 
