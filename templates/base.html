@@ -15,41 +15,29 @@
             flex-direction: column;
             min-height: 100vh;
             margin: 0;
-                }
-
-        
-                .wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200%;
-            height: 100px;
-            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%23ffffff" fill-opacity="1" d="M0,160L48,165.3C96,171,192,181,288,160C384,139,480,85,576,85.3C672,85,768,139,864,160C960,181,1056,171,1152,149.3C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/%3E%3C/svg%3E') repeat-x;
-            animation: wave 10s linear infinite;
         }
 
-        @keyframes wave {
+        /* Animación de desvanecimiento de colores */
+        @keyframes gradient-animation {
             0% {
-                transform: translateX(0);
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
             }
             100% {
-                transform: translateX(-50%);
+                background-position: 0% 50%;
             }
         }
 
-
+        /* Header con gradiente animado */
         header {
-            background: linear-gradient(90deg, #2617ac, #0d86b7, #f4a261);
-            background-size: 200% 100%;
+            background: linear-gradient(90deg, #2617ac, #0d86b7, #000000, #f4b400);
+            background-size: 300% 300%;
             color: white;
-            animation: wave-right 5s linear infinite;
-        }
-        /* Header */
-        header {
-            background: linear-gradient(45deg, #2617ac, #0d86b7);
-            color: rgb(0, 0, 0);
             padding: 20px 0;
-            box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.1);
+            animation: gradient-animation 8s ease infinite;
+            text-align: center;
         }
 
         header h1 {
@@ -82,22 +70,18 @@
             transition: all 0.3s ease-in-out;
         }
 
-        .nav-link i {
-            margin-right: 8px;
-            color: #ffffff;
-        }
-
         .nav-link:hover {
             color: #f4a261;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
         }
 
+        /* Footer con gradiente animado */
         footer {
-            background: linear-gradient(45deg,#2617ac, #0d86b7);
-            color: rgb(255, 255, 255);
+            background: linear-gradient(90deg, #2617ac, #0d86b7, #000000, #f4b400);
+            background-size: 300% 300%;
+            color: white;
             text-align: center;
             padding: 20px 0;
+            animation: gradient-animation 8s ease infinite;
             margin-top: auto;
         }
 
@@ -113,7 +97,7 @@
         }
 
         footer ul li a {
-            color: rgb(0, 0, 0);
+            color: white;
             font-size: 1.2rem;
             transition: color 0.3s;
         }
@@ -125,6 +109,7 @@
         footer p {
             margin: 10px 0;
         }
+    </style>
     </style>
 </head>
 <style>
