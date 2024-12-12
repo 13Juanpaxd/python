@@ -92,9 +92,20 @@ def register():
         distrito = request.form['distrito']
         foto = request.files['foto']
         foto_blob = foto.read()
-        
+
         conn = get_db_connection()
         cursor = conn.cursor()
+
+
+        cursor.execute("SELECT COUNT(*) FROM FIDE_CLIENTES_TB WHERE Correo = :correo", {'correo': correo})
+        correo_existente = cursor.fetchone()[0]
+
+        if correo_existente > 0:
+            flash('El correo ingresado ya está en uso. Por favor, utiliza otro correo.', 'danger')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('register'))
+
         cursor.execute("""
             INSERT INTO FIDE_CLIENTES_TB 
             (Nombre, Telefono, Cedula, Correo, Pais, Provincia, Canton, Distrito, Foto)
@@ -113,7 +124,7 @@ def register():
         conn.commit()
         cursor.close()
         conn.close()
-        
+
         try:
             msg = Message(
                 '¡Registro exitoso!',
@@ -127,6 +138,7 @@ def register():
 
         return redirect(url_for('login'))
     return render_template('register.html')
+
 
 #############################################################################################################
 
