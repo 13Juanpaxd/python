@@ -69,7 +69,6 @@
             </form>
         </div>
     </div>
-
     <div class="card shadow-lg">
         <div class="card-header bg-secondary text-white text-center">
             <h3 class="font-weight-bold">Clientes Registrados</h3>
@@ -78,40 +77,41 @@
             <table class="table table-hover table-striped table-bordered text-center">
                 <thead class="thead-dark">
                     <tr>
-                        <th>ID Cliente</th>
-                        <th>Nombre</th>
-                        <th>Teléfono</th>
-                        <th>Cédula</th>
-                        <th>Correo</th>
-                        <th>País</th>
-                        <th>Provincia</th>
-                        <th>Cantón</th>
-                        <th>Distrito</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in rows %}
-                    <tr>
-                        <td>{{ row[0] }}</td>
-                        <td>{{ row[1] }}</td>
-                        <td>{{ row[2] }}</td>
-                        <td>{{ row[3] }}</td>
-                        <td>{{ row[4] }}</td>
-                        <td>{{ row[5] }}</td>
-                        <td>{{ row[6] }}</td>
-                        <td>{{ row[7] }}</td>
-                        <td>{{ row[8] }}</td>
-                        <td>
-                            <span class="badge badge-{{ 'success' if row[9] == 1 else 'danger' }} p-2">
-                                {{ 'Activo' if row[9] == 1 else 'Inactivo' }}
-                            </span>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            <th>ID Cliente</th>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Cédula</th>
+                            <th>Correo</th>
+                            <th>País</th>
+                            <th>Provincia</th>
+                            <th>Cantón</th>
+                            <th>Distrito</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                            <td>{{ row[2] }}</td>
+                            <td>{{ row[3] }}</td>
+                            <td>{{ row[4] }}</td>
+                            <td>{{ row[5] }}</td>
+                            <td>{{ row[6] }}</td>
+                            <td>{{ row[7] }}</td>
+                            <td>{{ row[8] }}</td>
+                            <td>
+                                <span class="badge badge-{{ 'success' if row[9] == 1 else 'danger' }} p-2">
+                                    {{ 'Activo' if row[9] == 1 else 'Inactivo' }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
+    
 {% endblock %}
