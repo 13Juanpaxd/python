@@ -470,6 +470,7 @@ def clientes():
         return redirect(url_for('login'))
     conn = get_db_connection()
     cursor = conn.cursor()
+    
     if request.method == 'POST':
         nombre = request.form['nombre']
         telefono = request.form['telefono']
@@ -494,14 +495,21 @@ def clientes():
             'distrito': distrito
         })
         conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect(url_for('clientes'))
-
-    cursor.execute('SELECT ID_Cliente, Nombre, Telefono, Cedula, Correo, Pais, Provincia, Canton, Distrito, Estado_ID FROM FIDE_CLIENTES_TB')
+    
+    cursor.execute("""
+        SELECT c.ID_Cliente, c.Nombre, c.Telefono, c.Cedula, c.Correo, 
+               p.Nombre AS Pais, pr.Nombre AS Provincia, 
+               ca.Nombre AS Canton, d.Nombre AS Distrito, c.Estado_ID 
+        FROM FIDE_CLIENTES_TB c
+        JOIN FIDE_PAIS_TB p ON c.Pais = p.ID_Pais
+        JOIN FIDE_PROVINCIA_TB pr ON c.Provincia = pr.ID_Provincia
+        JOIN FIDE_CANTON_TB ca ON c.Canton = ca.ID_Canton
+        JOIN FIDE_DISTRITO_TB d ON c.Distrito = d.ID_Distrito
+    """)
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
+    
     return render_template('clientes.html', rows=rows)
 
 
@@ -551,7 +559,7 @@ def envios():
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT e.ID_Envios, e.Factura_ID, em.EMPRESA,  e.Estado 
+        SELECT e.ID_Envios, e.Factura_ID, em.EMPRESA, e.Estado 
         FROM FIDE_ENVIOS_TB e
         JOIN FIDE_FACTURA_TB f ON e.Factura_ID = f.ID_Factura
         JOIN FIDE_CLIENTES_TB c ON f.Cliente_ID = c.ID_Cliente
@@ -563,6 +571,7 @@ def envios():
     conn.close()
 
     return render_template('envios.html', envios=envios)
+
 
 
 
