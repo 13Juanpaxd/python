@@ -6,8 +6,7 @@
     <title>{% block title %}Tu Tienda{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> 
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -17,7 +16,6 @@
             margin: 0;
         }
 
-        /* Animación de desvanecimiento de colores */
         @keyframes gradient-animation {
             0% {
                 background-position: 0% 50%;
@@ -30,9 +28,8 @@
             }
         }
 
-        /* Header con gradiente animado */
         header {
-            background: linear-gradient(90deg, #2617ac, #0d86b7, #000000, #f4b400);
+            background: linear-gradient(90deg, #2617ac, #0d86b7, #f4a261, #f4b400);
             background-size: 300% 300%;
             color: white;
             padding: 20px 0;
@@ -74,7 +71,7 @@
             color: #f4a261;
         }
 
-        /* Footer con gradiente animado */
+     
         footer {
             background: linear-gradient(90deg, #2617ac, #0d86b7, #000000, #f4b400);
             background-size: 300% 300%;
@@ -180,7 +177,6 @@
             </div>
         </nav>
     </header>
-
     <main class="container mt-4">
         {% block content %}
         <div class="text-center">
@@ -191,7 +187,6 @@
     </main>
     <footer class="footer bg-dark text-white">
         <div class="container d-flex flex-column flex-md-row justify-content-between align-items-start py-4">
-            <!-- Sección izquierda -->
             <div class="left-section text-center text-md-left mb-3 mb-md-0">
                 <p class="mb-2">¡Síguenos en nuestras redes sociales!</p>
                 <ul class="list-inline mb-2">
@@ -208,8 +203,6 @@
                 </ul>
                 <p>&copy; 2024 Tu Tienda. Todos los derechos reservados.</p>
             </div>
-    
-            <!-- Sección derecha -->
             <div class="right-section text-center text-md-left">
                 <h5 class="mb-2">Atención al Cliente</h5>
                 <p class="mb-2">¿Necesitas ayuda? Contáctanos por:</p>
@@ -228,9 +221,6 @@
             </div>
         </div>
     </footer>
-    
-    
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
