@@ -214,13 +214,13 @@
                                 <p class="card-text"><strong>Precio:</strong> ₡{{ producto[3] }}</p>
                             </div>
                             <div class="card-footer d-flex justify-content-between">
-                                <!-- Botón de favorito -->
+                                
                                 <form action="{{ url_for('agregar_favorito', producto_id=producto[0]) }}" method="post">
                                     <button type="submit" class="btn btn-light">
                                         <i class="fas fa-heart"></i> Favorito
                                     </button>
                                 </form>
-                                <!-- Botón de carrito -->
+                               
                                 <form action="{{ url_for('agregar_al_carrito', producto_id=producto[0]) }}" method="post">
                                     <input type="hidden" name="cantidad" value="1">
                                     <button type="submit" class="btn btn-primary">
@@ -239,7 +239,7 @@
     
     <footer class="footer">
         <div class="container d-flex justify-content-between align-items-start py-4">
-            <!-- Sección izquierda: Redes sociales y derechos reservados -->
+           
             <div class="left-section text-left">
                 <p class="mb-2">¡Síguenos en nuestras redes sociales!</p>
                 <ul class="list-inline mb-2">
@@ -257,7 +257,7 @@
                 <p>&copy; 2024 Tu Tienda. Todos los derechos reservados.</p>
             </div>
    
-            <!-- Sección derecha: Atención al Cliente -->
+            
             <div class="right-section text-left">
                 <h5 class="mb-2">Atención al Cliente</h5>
                 <p class="mb-2">¿Necesitas ayuda? Contáctanos por:</p>

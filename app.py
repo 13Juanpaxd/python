@@ -1003,6 +1003,19 @@ def proveedores_view():
     
     return render_template('proveedores.html', proveedores=proveedores)
 
+@app.route('/eliminar_proveedor/<int:proveedor_id>', methods=['POST'])
+def eliminar_proveedor(proveedor_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Eliminar el proveedor por su ID
+    cursor.execute('DELETE FROM proveedores WHERE ID_Proveedor = :proveedor_id', {'proveedor_id': proveedor_id})
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    flash('Proveedor eliminado exitosamente.', 'success')
+    return redirect(url_for('proveedores'))
 
 
 #############################################################################################################
