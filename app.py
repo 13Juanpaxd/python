@@ -76,7 +76,6 @@ def index():
         return redirect(url_for('login'))
     return render_template('index.html')
     
-
 #############################################################################################################
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -177,47 +176,7 @@ def eliminar_producto(producto_id):
 
     flash('Producto eliminado exitosamente.', 'success')
     return redirect(url_for('inventario'))
-#################################################################
 
-@app.route('/editar_producto/<int:producto_id>', methods=['GET', 'POST'])
-def editar_producto(producto_id):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    if request.method == 'POST':
-        nombre = request.form['nombre']
-        precio = request.form['precio']
-        detalle = request.form['detalle']
-        cantidad = request.form['cantidad']
-        categoria = request.form['categoria']
-
-        cursor.execute("""
-            UPDATE productos
-            SET Nombre = :nombre, Precio = :precio, Detalle = :detalle,
-                Cantidad = :cantidad, Categoria = :categoria
-            WHERE ID = :producto_id
-        """, {
-            'nombre': nombre,
-            'precio': precio,
-            'detalle': detalle,
-            'cantidad': cantidad,
-            'categoria': categoria,
-            'producto_id': producto_id
-        })
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        flash('Producto actualizado exitosamente.', 'success')
-        return redirect(url_for('inventario'))
-
-    # Obtener datos del producto
-    cursor.execute('SELECT * FROM productos WHERE ID = :producto_id', {'producto_id': producto_id})
-    producto = cursor.fetchone()
-    cursor.close()
-    conn.close()
-
-    return render_template('editar_producto.html', producto=producto)
 
 #############################################################################################################
 
@@ -602,6 +561,75 @@ def inventario():
         cursor.close()
         conn.close()
  
+
+
+#############################################################################################################
+
+@app.route('/editar_producto/<int:id_producto>', methods=['GET', 'POST'])
+def editar_producto(id_producto):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        if request.method == 'POST':
+            nombre = request.form['nombre']
+            precio = request.form['precio']
+            detalle = request.form['detalle']
+            cantidad = request.form['cantidad']
+            categoria = request.form['categoria']
+            proveedor_id = request.form['proveedor_id']
+            casillero_id = request.form['casillero_id']
+            imagen = request.files.get('imagen')
+            
+            if imagen:
+                imagen_blob = imagen.read()
+                cursor.execute("""
+                    UPDATE FIDE_INVENTARIO_TB
+                    SET Nombre = :nombre, Imagen = :imagen_blob, Precio = :precio, 
+                        Detalle = :detalle, Cantidad = :cantidad, Categoria = :categoria, 
+                        Proveedor_ID = :proveedor_id, Casillero_ID = :casillero_id
+                    WHERE ID_Producto = :id_producto
+                """, {
+                    'nombre': nombre,
+                    'imagen_blob': imagen_blob,
+                    'precio': precio,
+                    'detalle': detalle,
+                    'cantidad': cantidad,
+                    'categoria': categoria,
+                    'proveedor_id': proveedor_id,
+                    'casillero_id': casillero_id,
+                    'id_producto': id_producto
+                })
+            else:
+                cursor.execute("""
+                    UPDATE FIDE_INVENTARIO_TB
+                    SET Nombre = :nombre, Precio = :precio, 
+                        Detalle = :detalle, Cantidad = :cantidad, Categoria = :categoria, 
+                        Proveedor_ID = :proveedor_id, Casillero_ID = :casillero_id
+                    WHERE ID_Producto = :id_producto
+                """, {
+                    'nombre': nombre,
+                    'precio': precio,
+                    'detalle': detalle,
+                    'cantidad': cantidad,
+                    'categoria': categoria,
+                    'proveedor_id': proveedor_id,
+                    'casillero_id': casillero_id,
+                    'id_producto': id_producto
+                })
+            conn.commit()
+            return redirect(url_for('inventario'))
+
+        cursor.execute('SELECT * FROM FIDE_INVENTARIO_TB WHERE ID_Producto = :id_producto', {'id_producto': id_producto})
+        producto = cursor.fetchone()
+        return render_template('editar_producto.html', producto=producto)
+    except Exception as e:
+        print("Error en la operación:", str(e))
+    finally:
+        cursor.close()
+        conn.close()
 
 #############################################################################################################
 

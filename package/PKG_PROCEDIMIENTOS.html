@@ -1,0 +1,352 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=Cp1252" />
+<script src="PKG_PROCEDIMIENTOS/report.js" type="text/javascript"></script>
+<link href="PKG_PROCEDIMIENTOS/report.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+<div class="banner">
+<table width="98%"><tr>
+<td><h2 class="banner">PKG_PROCEDIMIENTOS</h2></td>
+</tr></table></div>
+<div id="maintabs">
+<div class="currentmaintab" onclick="onSelectMainTab(this, 0)">
+<div>
+<p>Doc</p>
+</div>
+</div>
+<div class="maintab" onclick="onSelectMainTab(this, 1)">
+<div>
+<p>Details</p>
+</div>
+</div>
+<div class="maintab" onclick="onSelectMainTab(this, 2)">
+<div>
+<p>Grants</p>
+</div>
+</div>
+<div class="maintab" onclick="onSelectMainTab(this, 3)">
+<div>
+<p>References</p>
+</div>
+</div>
+<div class="maintab" onclick="onSelectMainTab(this, 4)">
+<div>
+<p>Dependencies</p>
+</div>
+</div>
+<div class="maintab" onclick="onSelectMainTab(this, 5)">
+<div>
+<p>Code</p>
+</div>
+</div>
+</div>
+<br/>
+<div id="masterreports">
+<div id="Master.0">
+<div class="currentmasterreport">
+<TABLE CELLSPACING="0" CELLPADDING="1" WIDTH="100%" BORDER="0">
+<TR><TD CLASS="NavBarRow3" VALIGN="top"><FONT SIZE="-2">      SUMMARY:  <A HREF="#field_summary">FIELD</A> | <A HREF="#type_summary">TYPE</A> | <A HREF="#method_summary">METHOD</A></FONT></TD><TD CLASS="NavBarRow3" VALIGN="top"><FONT SIZE="-2"></TR></TABLE><HR><P>1. Procedimiento para insertar productos tabla FIDE_INVENTARIO_TB ARREGLADO</P><HR><P></P><A NAME="method_summary"></A><TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="3" BORDER="1"><TR CLASS="TableHeadingColor"><TD COLSPAN="2"><FONT SIZE="+2"><B>Method Summary</B></FONT></TD><TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_CLIENTE">P_INSERTAR_CLIENTE</A></B>( V_NOMBRE IN VARCHAR2 , V_TELEFONO IN VARCHAR2 , V_CEDULA IN NUMBER , V_CORREO IN VARCHAR2 , V_PAIS IN NUMBER , V_PROVINCIA IN NUMBER , V_CANTON IN NUMBER , V_DISTRITO IN NUMBER ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Procedimiento para insertar clientes</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_ENCARGO">P_INSERTAR_ENCARGO</A></B>( V_PRODUCTO_ID IN NUMBER , V_CLIENTE_ID IN NUMBER , V_PLAZO IN NUMBER , V_FECHA_INICIAL IN DATE , V_FECHA_LIMITE IN DATE ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10 Procedimiento para insertar un encargo tabla FIDE_ENCARGOS_TB</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_ENVIO">P_INSERTAR_ENVIO</A></B>( V_CLIENTE_ID IN NUMBER , V_PRODUCTO_ID IN NUMBER , V_EMPRESA_ID IN NUMBER ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Procedimiento para insertar un envio tabla FIDE_ENVIOS_TB</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_FACTURA">P_INSERTAR_FACTURA</A></B>( V_CLIENTE_ID IN NUMBER , V_METODO_ID IN NUMBER , V_DETALLE IN VARCHAR2 , V_TOTAL_DE_LINEAS IN NUMBER , V_TOTAL IN NUMBER , V_SUBTOTAL IN NUMBER , V_IVA IN NUMBER , V_COSTO_ENVIO IN NUMBER , V_CARRITO_ID IN NUMBER ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. Procedimiento para insertar factura tabla FIDE_FACTURA_TB</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_FAVORITO">P_INSERTAR_FAVORITO</A></B>( V_CLIENTE_ID IN NUMBER , V_PRODUCTO_ID IN NUMBER ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9. Procedimiento para insertar un favorito tabla FIDE_FAVORITO_TB</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_FEEDBACK">P_INSERTAR_FEEDBACK</A></B>( V_CLIENTE_ID IN NUMBER , V_COMENTARIO IN VARCHAR2 ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11 Procedimiento para insertar un feedback tabla FIDE_FEEDBACK_TB</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_INVENTARIO">P_INSERTAR_INVENTARIO</A></B>( V_NOMBRE IN VARCHAR2 , V_PRECIO IN NUMBER , V_DETALLE IN VARCHAR2 , V_CANTIDAD IN NUMBER , V_CATEGORIA IN VARCHAR2 , V_PROVEEDOR_ID IN NUMBER , V_CASILLERO_ID IN NUMBER , V_FECHA_ENTRADA IN DATE ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7. Procedimiento para insertar un inventario tabla FIDE_INVENTARIO_TB</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_PAIS">P_INSERTAR_PAIS</A></B>( V_NOMBRE_PAIS IN VARCHAR2 ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6. Procedimiento para insertar pais tabla FIDE_PAIS_TB</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_PRODUCTO">P_INSERTAR_PRODUCTO</A></B>( V_NOMBRE IN VARCHAR2 , V_PRECIO IN NUMBER , V_DETALLE IN VARCHAR2 , V_CANTIDAD IN NUMBER , V_CATEGORIA IN VARCHAR2 ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_PROVEEDOR">P_INSERTAR_PROVEEDOR</A></B>( V_NOMBRE IN VARCHAR2 , V_DETALLE IN VARCHAR2 ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Procedimiento para insertar proveedor tabla FIDE_PROVEEDORES_TB ARREGLADO</TD></TR>
+<TR CLASS="TableRowColor"><TD WIDTH="1%" VALIGN="top" ALIGN="right"><FONT SIZE="-1"><CODE>&nbsp;</CODE></FONT></TD><TD><CODE><B><A HREF="#P_INSERTAR_REGISTRO">P_INSERTAR_REGISTRO</A></B>( V_FACTURA_ID IN NUMBER , V_TOTAL_BENEFICIO IN NUMBER , V_COSTO_TOTAL IN NUMBER ) </CODE><BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. Procedimiento para insertar registros tabla FIDE_REGISTRO_TB ARREGLADO</TD></TR>
+</TABLE>
+<P></P><A NAME="method_detail"></A><TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="3" BORDER="1"><TR CLASS="TableHeadingColor"><TD COLSPAN="2"><FONT SIZE="+2"><B>Method Detail</B></FONT></TD></TABLE><A NAME="P_INSERTAR_CLIENTE"></A>
+<H3>P_INSERTAR_CLIENTE</H3><PRE>          <B>P_INSERTAR_CLIENTE</B>( V_NOMBRE IN VARCHAR2 , V_TELEFONO IN VARCHAR2 , V_CEDULA IN NUMBER , V_CORREO IN VARCHAR2 , V_PAIS IN NUMBER , V_PROVINCIA IN NUMBER , V_CANTON IN NUMBER , V_DISTRITO IN NUMBER ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Procedimiento para insertar clientes<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_ENCARGO"></A>
+<H3>P_INSERTAR_ENCARGO</H3><PRE>          <B>P_INSERTAR_ENCARGO</B>( V_PRODUCTO_ID IN NUMBER , V_CLIENTE_ID IN NUMBER , V_PLAZO IN NUMBER , V_FECHA_INICIAL IN DATE , V_FECHA_LIMITE IN DATE ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10 Procedimiento para insertar un encargo tabla FIDE_ENCARGOS_TB<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_ENVIO"></A>
+<H3>P_INSERTAR_ENVIO</H3><PRE>          <B>P_INSERTAR_ENVIO</B>( V_CLIENTE_ID IN NUMBER , V_PRODUCTO_ID IN NUMBER , V_EMPRESA_ID IN NUMBER ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Procedimiento para insertar un envio tabla FIDE_ENVIOS_TB<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_FACTURA"></A>
+<H3>P_INSERTAR_FACTURA</H3><PRE>          <B>P_INSERTAR_FACTURA</B>( V_CLIENTE_ID IN NUMBER , V_METODO_ID IN NUMBER , V_DETALLE IN VARCHAR2 , V_TOTAL_DE_LINEAS IN NUMBER , V_TOTAL IN NUMBER , V_SUBTOTAL IN NUMBER , V_IVA IN NUMBER , V_COSTO_ENVIO IN NUMBER , V_CARRITO_ID IN NUMBER ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. Procedimiento para insertar factura tabla FIDE_FACTURA_TB<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_FAVORITO"></A>
+<H3>P_INSERTAR_FAVORITO</H3><PRE>          <B>P_INSERTAR_FAVORITO</B>( V_CLIENTE_ID IN NUMBER , V_PRODUCTO_ID IN NUMBER ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9. Procedimiento para insertar un favorito tabla FIDE_FAVORITO_TB<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_FEEDBACK"></A>
+<H3>P_INSERTAR_FEEDBACK</H3><PRE>          <B>P_INSERTAR_FEEDBACK</B>( V_CLIENTE_ID IN NUMBER , V_COMENTARIO IN VARCHAR2 ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11 Procedimiento para insertar un feedback tabla FIDE_FEEDBACK_TB<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_INVENTARIO"></A>
+<H3>P_INSERTAR_INVENTARIO</H3><PRE>          <B>P_INSERTAR_INVENTARIO</B>( V_NOMBRE IN VARCHAR2 , V_PRECIO IN NUMBER , V_DETALLE IN VARCHAR2 , V_CANTIDAD IN NUMBER , V_CATEGORIA IN VARCHAR2 , V_PROVEEDOR_ID IN NUMBER , V_CASILLERO_ID IN NUMBER , V_FECHA_ENTRADA IN DATE ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7. Procedimiento para insertar un inventario tabla FIDE_INVENTARIO_TB<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_PAIS"></A>
+<H3>P_INSERTAR_PAIS</H3><PRE>          <B>P_INSERTAR_PAIS</B>( V_NOMBRE_PAIS IN VARCHAR2 ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6. Procedimiento para insertar pais tabla FIDE_PAIS_TB<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_PRODUCTO"></A>
+<H3>P_INSERTAR_PRODUCTO</H3><PRE>          <B>P_INSERTAR_PRODUCTO</B>( V_NOMBRE IN VARCHAR2 , V_PRECIO IN NUMBER , V_DETALLE IN VARCHAR2 , V_CANTIDAD IN NUMBER , V_CATEGORIA IN VARCHAR2 ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_PROVEEDOR"></A>
+<H3>P_INSERTAR_PROVEEDOR</H3><PRE>          <B>P_INSERTAR_PROVEEDOR</B>( V_NOMBRE IN VARCHAR2 , V_DETALLE IN VARCHAR2 ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Procedimiento para insertar proveedor tabla FIDE_PROVEEDORES_TB ARREGLADO<DD><DL></DL></DD></DL><HR><A NAME="P_INSERTAR_REGISTRO"></A>
+<H3>P_INSERTAR_REGISTRO</H3><PRE>          <B>P_INSERTAR_REGISTRO</B>( V_FACTURA_ID IN NUMBER , V_TOTAL_BENEFICIO IN NUMBER , V_COSTO_TOTAL IN NUMBER ) </PRE><DL>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. Procedimiento para insertar registros tabla FIDE_REGISTRO_TB ARREGLADO<DD><DL></DL></DD></DL><HR><TABLE CELLSPACING="0" CELLPADDING="1" WIDTH="100%" BORDER="0">
+<TR><TD CLASS="NavBarRow3" VALIGN="top"><FONT SIZE="-2">      SUMMARY:  <A HREF="#field_summary">FIELD</A> | <A HREF="#type_summary">TYPE</A> | <A HREF="#method_summary">METHOD</A></FONT></TD><TD CLASS="NavBarRow3" VALIGN="top"><FONT SIZE="-2"></TR></TABLE></div>
+</div>
+<div id="Master.1">
+<div class="masterreport">
+<table id="Table.0" cellpadding="0" cellspacing="0" summary="">
+<th>NAME</th>
+<th>VALUE</th>
+</tr>
+<tr>
+<td>OWNER</td>
+<td>PROYECTODEFINITIVO</td>
+</tr>
+<tr>
+<td>OBJECT_NAME</td>
+<td>PKG_PROCEDIMIENTOS</td>
+</tr>
+<tr>
+<td>SUBOBJECT_NAME</td>
+<td>null</td>
+</tr>
+<tr>
+<td>OBJECT_ID</td>
+<td>81386</td>
+</tr>
+<tr>
+<td>DATA_OBJECT_ID</td>
+<td>null</td>
+</tr>
+<tr>
+<td>OBJECT_TYPE</td>
+<td>PACKAGE</td>
+</tr>
+<tr>
+<td>CREATED</td>
+<td>07-12-2024&nbsp;16:27:57</td>
+</tr>
+<tr>
+<td>LAST_DDL_TIME</td>
+<td>07-12-2024&nbsp;16:27:57</td>
+</tr>
+<tr>
+<td>TIMESTAMP</td>
+<td>2024-12-07:16:27:57</td>
+</tr>
+<tr>
+<td>STATUS</td>
+<td>VALID</td>
+</tr>
+<tr>
+<td>TEMPORARY</td>
+<td>N</td>
+</tr>
+<tr>
+<td>GENERATED</td>
+<td>N</td>
+</tr>
+<tr>
+<td>SECONDARY</td>
+<td>N</td>
+</tr>
+<tr>
+<td>NAMESPACE</td>
+<td>1</td>
+</tr>
+<tr>
+<td>EDITION_NAME</td>
+<td>null</td>
+</tr>
+<tr>
+<td>SHARING</td>
+<td>NONE</td>
+</tr>
+<tr>
+<td>EDITIONABLE</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>ORACLE_MAINTAINED</td>
+<td>N</td>
+</tr>
+<tr>
+<td>APPLICATION</td>
+<td>N</td>
+</tr>
+<tr>
+<td>DEFAULT_COLLATION</td>
+<td>USING_NLS_COMP</td>
+</tr>
+<tr>
+<td>DUPLICATED</td>
+<td>N</td>
+</tr>
+<tr>
+<td>SHARDED</td>
+<td>N</td>
+</tr>
+<tr>
+<td>IMPORTED_OBJECT</td>
+<td>N</td>
+</tr>
+<tr>
+<td>CREATED_APPID</td>
+<td>null</td>
+</tr>
+<tr>
+<td>CREATED_VSNID</td>
+<td>null</td>
+</tr>
+<tr>
+<td>MODIFIED_APPID</td>
+<td>null</td>
+</tr>
+<tr>
+<td>MODIFIED_VSNID</td>
+<td>null</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="Master.2">
+<div class="masterreport">
+<table id="Table.1" cellpadding="0" cellspacing="0" summary="">
+<tr>
+<th>PRIVILEGE</th>
+<th>GRANTEE</th>
+<th>GRANTABLE</th>
+<th>GRANTOR</th>
+<th>OBJECT_NAME</th>
+</tr>
+</table>
+</div>
+</div>
+<div id="Master.3">
+<div class="masterreport">
+<table id="Table.2" cellpadding="0" cellspacing="0" summary="">
+<tr>
+<th>NAME</th>
+<th>OWNER</th>
+<th>TYPE</th>
+<th>OBJECT_ID</th>
+<th>STATUS</th>
+<th>TYPE_LINK</th>
+</tr>
+</table>
+</div>
+</div>
+<div id="Master.4">
+<div class="masterreport">
+<table id="Table.3" cellpadding="0" cellspacing="0" summary="">
+<tr>
+<th>NAME</th>
+<th>OWNER</th>
+<th>TYPE</th>
+<th>OBJECT_ID</th>
+<th>STATUS</th>
+<th>TYPE_LINK</th>
+</tr>
+</table>
+</div>
+</div>
+<div id="Master.5">
+<div class="masterreport">
+<pre>
+PACKAGE PKG_PROCEDIMIENTOS AS
+
+  --1. Procedimiento para insertar productos tabla FIDE_INVENTARIO_TB ARREGLADO
+  PROCEDURE P_INSERTAR_PRODUCTO(
+    --  V_ID_PRODUCTO IN NUMBER,
+    V_NOMBRE IN VARCHAR2,
+    V_PRECIO IN NUMBER,
+    V_DETALLE IN VARCHAR2,
+    V_CANTIDAD IN NUMBER,
+    V_CATEGORIA IN VARCHAR2
+  );
+
+  --2. Procedimiento para insertar clientes
+  PROCEDURE P_INSERTAR_CLIENTE(
+    --V_ID_CLIENTE IN NUMBER,
+    V_NOMBRE IN VARCHAR2,
+    V_TELEFONO IN VARCHAR2,
+    V_CEDULA IN NUMBER,
+    V_CORREO IN VARCHAR2,
+    V_PAIS IN NUMBER,
+    V_PROVINCIA IN NUMBER,
+    V_CANTON IN NUMBER,
+    V_DISTRITO IN NUMBER
+  );
+
+  --3. Procedimiento para insertar proveedor tabla FIDE_PROVEEDORES_TB ARREGLADO
+  PROCEDURE P_INSERTAR_PROVEEDOR(
+    --V_ID_PROVEEDOR IN NUMBER,
+    V_NOMBRE IN VARCHAR2,
+    V_DETALLE IN VARCHAR2
+  );
+
+  --4. Procedimiento para insertar factura tabla FIDE_FACTURA_TB
+  PROCEDURE P_INSERTAR_FACTURA(
+    --V_ID_FACTURA IN NUMBER,
+    V_CLIENTE_ID IN NUMBER,
+    V_METODO_ID IN NUMBER,
+    V_DETALLE IN VARCHAR2,
+    V_TOTAL_DE_LINEAS IN NUMBER,
+    V_TOTAL IN NUMBER,
+    V_SUBTOTAL IN NUMBER,
+    V_IVA IN NUMBER,
+    V_COSTO_ENVIO IN NUMBER,
+    V_CARRITO_ID IN NUMBER
+  );
+
+  --5. Procedimiento para insertar registros tabla FIDE_REGISTRO_TB ARREGLADO
+  PROCEDURE P_INSERTAR_REGISTRO(
+    --V_ID_REGISTRO IN NUMBER,
+    V_FACTURA_ID IN NUMBER,
+    V_TOTAL_BENEFICIO IN NUMBER,
+    V_COSTO_TOTAL IN NUMBER
+  );
+
+  --6. Procedimiento para insertar pais tabla FIDE_PAIS_TB
+  PROCEDURE P_INSERTAR_PAIS(
+    --V_ID_PAIS IN NUMBER,
+    V_NOMBRE_PAIS IN VARCHAR2
+  );
+
+  --7. Procedimiento para insertar un inventario tabla FIDE_INVENTARIO_TB
+  PROCEDURE P_INSERTAR_INVENTARIO(
+    --V_ID_PRODUCTO IN NUMBER,
+    V_NOMBRE IN VARCHAR2,
+    V_PRECIO IN NUMBER,
+    V_DETALLE IN VARCHAR2,
+    V_CANTIDAD IN NUMBER,
+    V_CATEGORIA IN VARCHAR2,
+    V_PROVEEDOR_ID IN NUMBER,
+    V_CASILLERO_ID IN NUMBER,
+    --V_ESTADO_ID IN NUMBER,
+    V_FECHA_ENTRADA IN DATE
+  );
+
+  --8. Procedimiento para insertar un envio tabla FIDE_ENVIOS_TB
+  PROCEDURE P_INSERTAR_ENVIO(
+    --V_ID_ENVIO IN NUMBER,
+    V_CLIENTE_ID IN NUMBER,
+    V_PRODUCTO_ID IN NUMBER,
+    V_EMPRESA_ID IN NUMBER
+    --V_ESTADO_ID IN NUMBER
+  );
+
+  --9. Procedimiento para insertar un favorito tabla FIDE_FAVORITO_TB
+  PROCEDURE P_INSERTAR_FAVORITO(
+    --V_ID_FAVORITO IN NUMBER,
+    V_CLIENTE_ID IN NUMBER,
+    V_PRODUCTO_ID IN NUMBER
+   -- V_ESTADO_ID IN NUMBER
+  );
+
+  --10 Procedimiento para insertar un encargo tabla FIDE_ENCARGOS_TB
+  PROCEDURE P_INSERTAR_ENCARGO(
+   -- V_ID_ENCARGO IN NUMBER,
+    V_PRODUCTO_ID IN NUMBER,
+    V_CLIENTE_ID IN NUMBER,
+    V_PLAZO IN NUMBER,
+    V_FECHA_INICIAL IN DATE,
+    V_FECHA_LIMITE IN DATE
+    --V_ESTADO_ID IN NUMBER
+  );
+
+  --11 Procedimiento para insertar un feedback tabla FIDE_FEEDBACK_TB
+  PROCEDURE P_INSERTAR_FEEDBACK(
+   -- V_ID_FEEDBACK IN NUMBER,
+    V_CLIENTE_ID IN NUMBER,
+    V_COMENTARIO IN VARCHAR2
+    --V_ESTADO_ID IN NUMBER
+  );
+
+
+END PKG_PROCEDIMIENTOS;</pre>
+</div>
+</div>
+</div>
+</body>
+</html>
