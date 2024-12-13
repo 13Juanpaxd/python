@@ -96,7 +96,7 @@ def register():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-
+        # Verificar si el correo ya existe
         cursor.execute("SELECT COUNT(*) FROM FIDE_CLIENTES_TB WHERE Correo = :correo", {'correo': correo})
         correo_existente = cursor.fetchone()[0]
 
@@ -106,6 +106,17 @@ def register():
             conn.close()
             return redirect(url_for('register'))
 
+        # Verificar si la cédula ya existe
+        cursor.execute("SELECT COUNT(*) FROM FIDE_CLIENTES_TB WHERE Cedula = :cedula", {'cedula': cedula})
+        cedula_existente = cursor.fetchone()[0]
+
+        if cedula_existente > 0:
+            flash('La cédula ingresada ya está en uso. Por favor, verifica los datos ingresados.', 'danger')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('register'))
+
+        # Insertar el nuevo usuario
         cursor.execute("""
             INSERT INTO FIDE_CLIENTES_TB 
             (Nombre, Telefono, Cedula, Correo, Pais, Provincia, Canton, Distrito, Foto)
@@ -125,6 +136,7 @@ def register():
         cursor.close()
         conn.close()
 
+        # Enviar correo de confirmación
         try:
             msg = Message(
                 '¡Registro exitoso!',
@@ -132,12 +144,14 @@ def register():
             )
             msg.body = f"Hola {nombre},\n\nGracias por registrarte en Frikiland. Tu usuario ha sido creado exitosamente.\n\n¡Bienvenido!"
             mail.send(msg)
-            flash('Usuario registrado exitosamente. Se ha enviado un correo de confirmación.')
+            flash('Usuario registrado exitosamente. Se ha enviado un correo de confirmación.', 'success')
         except Exception as e:
             flash(f'Error al enviar el correo: {str(e)}', 'danger')
 
         return redirect(url_for('login'))
+
     return render_template('register.html')
+
 
 
 #############################################################################################################
