@@ -184,46 +184,62 @@
     {% endif %}
 {% endwith %}
 
-    <form method="post" action="{{ url_for('register') }}" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" required>
-        </div>
-        <div class="form-group">
-            <label for="telefono">Teléfono</label>
-            <input type="text" class="form-control" id="telefono" name="telefono" required>
-        </div>
-        <div class="form-group">
-            <label for="cedula">Cédula</label>
-            <input type="text" class="form-control" id="cedula" name="cedula" required>
-        </div>
-        <div class="form-group">
-            <label for="correo">Correo</label>
-            <input type="email" class="form-control" id="correo" name="correo" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="pais">País</label>
-            <input type="text" class="form-control" id="pais" name="pais" required>
-        </div>
-        <div class="form-group">
-            <label for="provincia">Provincia</label>
-            <input type="text" class="form-control" id="provincia" name="provincia" required>
-        </div>
-        <div class="form-group">
-            <label for="canton">Cantón</label>
-            <input type="text" class="form-control" id="canton" name="canton" required>
-        </div>
-        <div class="form-group">
-            <label for="distrito">Distrito</label>
-            <input type="text" class="form-control" id="distrito" name="distrito" required>
-        </div>
-        <div class="form-group">
-            <label for="foto">Foto</label>
-            <input type="file" class="form-control" id="foto" name="foto" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-    </form>
+<form method="post" action="{{ url_for('register') }}" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" required>
+    </div>
+    <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input type="text" class="form-control" id="telefono" name="telefono" required>
+    </div>
+    <div class="form-group">
+        <label for="cedula">Cédula</label>
+        <input type="text" class="form-control" id="cedula" name="cedula" required>
+    </div>
+    <div class="form-group">
+        <label for="correo">Correo</label>
+        <input type="email" class="form-control" id="correo" name="correo" required>
+    </div>
+    <div class="form-group">
+        <label for="pais">País</label>
+        <select class="form-control" id="pais" name="pais" required>
+            {% for pais in paises %}
+                <option value="{{ pais[0] }}">{{ pais[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="provincia">Provincia</label>
+        <select class="form-control" id="provincia" name="provincia" required>
+            {% for provincia in provincias %}
+                <option value="{{ provincia[0] }}">{{ provincia[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="canton">Cantón</label>
+        <select class="form-control" id="canton" name="canton" required>
+            {% for canton in cantones %}
+                <option value="{{ canton[0] }}">{{ canton[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="distrito">Distrito</label>
+        <select class="form-control" id="distrito" name="distrito" required>
+            {% for distrito in distritos %}
+                <option value="{{ distrito[0] }}">{{ distrito[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="foto">Foto</label>
+        <input type="file" class="form-control" id="foto" name="foto" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+</form>
+
 </div>
 
 
