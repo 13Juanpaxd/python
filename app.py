@@ -151,8 +151,59 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html')
+#############################################################
+@app.route('/eliminar_producto/<int:producto_id>', methods=['POST'])
+def eliminar_producto(producto_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM productos WHERE ID = :producto_id', {'producto_id': producto_id})
+    conn.commit()
+    cursor.close()
+    conn.close()
 
+    flash('Producto eliminado exitosamente.', 'success')
+    return redirect(url_for('inventario'))
+#################################################################
 
+@app.route('/editar_producto/<int:producto_id>', methods=['GET', 'POST'])
+def editar_producto(producto_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        precio = request.form['precio']
+        detalle = request.form['detalle']
+        cantidad = request.form['cantidad']
+        categoria = request.form['categoria']
+
+        cursor.execute("""
+            UPDATE productos
+            SET Nombre = :nombre, Precio = :precio, Detalle = :detalle,
+                Cantidad = :cantidad, Categoria = :categoria
+            WHERE ID = :producto_id
+        """, {
+            'nombre': nombre,
+            'precio': precio,
+            'detalle': detalle,
+            'cantidad': cantidad,
+            'categoria': categoria,
+            'producto_id': producto_id
+        })
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        flash('Producto actualizado exitosamente.', 'success')
+        return redirect(url_for('inventario'))
+
+    # Obtener datos del producto
+    cursor.execute('SELECT * FROM productos WHERE ID = :producto_id', {'producto_id': producto_id})
+    producto = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    return render_template('editar_producto.html', producto=producto)
 
 #############################################################################################################
 
