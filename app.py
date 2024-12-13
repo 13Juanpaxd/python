@@ -13,17 +13,16 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'nicoleobregon198@gmail.com'  
-app.config['MAIL_PASSWORD'] = 'znqn corv woaf bcew'         
-app.config['MAIL_DEFAULT_SENDER'] = 'Nicoleobregon198@gmail.com'
+app.config['MAIL_USERNAME'] = 'frikilandplus@gmail.com'  
+app.config['MAIL_PASSWORD'] = 'wqgt upzl cuqa jxyf'         
+app.config['MAIL_DEFAULT_SENDER'] = 'frikilandplus@gmail.com'
 
 mail = Mail(app)
-
 def get_db_connection():
     connection = cx_Oracle.connect(
         user='ProyectoDefinitivo',
         password='ProyectoDefinitivo',
-        dsn='localhost:1521/orcl',
+        dsn='localhost:1521/xe',
         encoding='UTF-8'
     )
     return connection
