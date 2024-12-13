@@ -23,7 +23,7 @@ def get_db_connection():
     connection = cx_Oracle.connect(
         user='ProyectoDefinitivo',
         password='ProyectoDefinitivo',
-        dsn='localhost:1521/orcl',
+        dsn='localhost:1521/xe',
         encoding='UTF-8'
     )
     return connection
@@ -81,7 +81,22 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Obtener datos para los dropdowns
+    cursor.execute("SELECT ID_Pais, Nombre FROM FIDE_PAIS_TB")
+    paises = cursor.fetchall()
+
+    cursor.execute("SELECT ID_Provincia, Nombre FROM FIDE_PROVINCIA_TB")
+    provincias = cursor.fetchall()
+
+    cursor.execute("SELECT ID_Canton, Nombre FROM FIDE_CANTON_TB")
+    cantones = cursor.fetchall()
+
+    cursor.execute("SELECT ID_Distrito, Nombre FROM FIDE_DISTRITO_TB")
+    distritos = cursor.fetchall()
+
     if request.method == 'POST':
         nombre = request.form['nombre']
         telefono = request.form['telefono']
@@ -93,9 +108,6 @@ def register():
         distrito = request.form['distrito']
         foto = request.files['foto']
         foto_blob = foto.read()
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
 
         # Verificar si el correo ya existe
         cursor.execute("SELECT COUNT(*) FROM FIDE_CLIENTES_TB WHERE Correo = :correo", {'correo': correo})
@@ -151,7 +163,8 @@ def register():
 
         return redirect(url_for('login'))
 
-    return render_template('register.html')
+    return render_template('register.html', paises=paises, provincias=provincias, cantones=cantones, distritos=distritos)
+
 #############################################################
 @app.route('/eliminar_producto/<int:producto_id>', methods=['POST'])
 def eliminar_producto(producto_id):
