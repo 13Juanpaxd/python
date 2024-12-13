@@ -169,7 +169,9 @@
         </nav>
     </header>
 
-
+    <div class="mt-3">
+        <a href="{{ url_for('logout') }}" class="btn btn-secondary">Regresar al inicio</a>
+    </div>
 <div class="container">
     <h2>Registrar nuevo usuario</h2>
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -239,6 +241,7 @@
     </div>
     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
 </form>
+
 
 </div>
 
