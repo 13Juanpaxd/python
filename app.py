@@ -156,10 +156,63 @@ def register():
 
 #############################################################################################################
 
-@app.route('/logout')
+
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    session.pop('user_id', None)
-    return redirect(url_for('login'))
+    if request.method == 'POST':
+        correo = request.form['correo']
+        cedula = request.form['cedula']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Verificar si el correo existe
+        cursor.execute("SELECT COUNT(*) FROM FIDE_CLIENTES_TB WHERE Correo = :correo", {'correo': correo})
+        correo_existente = cursor.fetchone()[0]
+
+        # Verificar si la cédula existe
+        cursor.execute("SELECT COUNT(*) FROM FIDE_CLIENTES_TB WHERE Cedula = :cedula", {'cedula': cedula})
+        cedula_existente = cursor.fetchone()[0]
+
+        if not correo_existente and not cedula_existente:
+            flash('El correo y la cédula ingresados no están registrados.', 'danger')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('login'))
+
+        if not correo_existente:
+            flash('El correo ingresado no está registrado.', 'danger')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('login'))
+
+        if not cedula_existente:
+            flash('La cédula ingresada no está registrada.', 'danger')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('login'))
+
+        # Validar si el correo y la cédula coinciden
+        cursor.execute("""
+            SELECT ID_Cliente FROM FIDE_CLIENTES_TB 
+            WHERE Correo = :correo AND Cedula = :cedula
+        """, {'correo': correo, 'cedula': cedula})
+        usuario = cursor.fetchone()
+
+        if usuario:
+            # Iniciar sesión
+            session['user_id'] = usuario[0]
+            flash('Inicio de sesión exitoso. Bienvenido.', 'success')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('home'))
+        else:
+            flash('El correo y la cédula no coinciden. Por favor, verifica los datos ingresados.', 'danger')
+            cursor.close()
+            conn.close()
+            return redirect(url_for('login'))
+
+    return render_template('login.html')
 
 
 #############################################################################################################
